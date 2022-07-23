@@ -23,10 +23,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # TODO: make this login required
     path('', TemplateView.as_view(template_name="index.html")),
-    re_path(r'^(?:.*)/?$', TemplateView.as_view(template_name="index.html"))
+    # re_path(r'^(?:.*)/?$', TemplateView.as_view(template_name="index.html"))
     # this one makes the auto append trailing slash works
     # consider adding media/static too
-    # re_path('(^(?!(api|admin)).*$)', TemplateView.as_view(template_name="index.html"))
+    re_path('(^(?!(api|admin|media|static)).*$)',
+            TemplateView.as_view(template_name="index.html"))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
