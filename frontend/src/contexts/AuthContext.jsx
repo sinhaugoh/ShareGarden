@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext({});
 
@@ -10,6 +11,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   // fetch auth user on first load or page refresh
   useEffect(() => {
@@ -31,8 +33,14 @@ export function AuthProvider({ children }) {
     }
   }, [isFirstLoad]);
 
+  async function logout() {
+    await fetch("/api/logout/");
+    setUser(null);
+    navigate("/");
+  }
+
   return (
-    <AuthContext.Provider value={{ user }}>
+    <AuthContext.Provider value={{ user, logout }}>
       {/*TODO: implement loading page*/}
       {isLoading ? <h1>is loading...</h1> : children}
     </AuthContext.Provider>

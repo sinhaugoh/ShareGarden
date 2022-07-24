@@ -1,12 +1,14 @@
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 export default function Home() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  console.log("home");
   return (
     <>
       <h1>Home page</h1>
       <Link to="chatroom/">Chatroom</Link>
-      {user && <img src={user?.profile_image} alt="profile" />}
+      {user && <button onClick={logout}>Logout</button>}
+      {user && <img src={user.profile_image} alt="profile" />}
     </>
   );
 }
