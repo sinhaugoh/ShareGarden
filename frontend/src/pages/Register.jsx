@@ -9,7 +9,6 @@ export default function Register() {
   const { user, register } = useAuth();
   const navigate = useNavigate();
 
-  console.log("user: " + user);
   // navigate to home page if the already authenticated
   useEffect(() => {
     if (user) {
@@ -33,7 +32,6 @@ export default function Register() {
       setErrors(response.data);
     }
     setIsSubmitting(false);
-    console.log(response);
   };
 
   // show loading if user is already authenticated
@@ -43,51 +41,87 @@ export default function Register() {
   }
 
   return (
-    <>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username
-          <input
-            type="text"
-            name="username"
-            autoFocus
-            autoCapitalize="none"
-            maxLength="150"
-            required
-            id="id_username"
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        {errors.username && <p>{errors.username[0]}</p>}
-        <label>
-          Password
-          <input
-            type="password"
-            name="password"
-            required
-            id="id_password"
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        {errors.password && <p>{errors.password[0]}</p>}
-        <label>
-          Password confirmation
-          <input
-            type="password"
-            name="password2"
-            required
-            id="id_password2"
-            onChange={handleChange}
-          />
-        </label>
+    <div className="d-flex vh-100 align-items-center">
+      <div className="container px-0">
+        <div className="row gx-5 justify-content-center">
+          <div className="col-4 d-none d-xl-block my-auto">
+            <img
+              style={{ width: "350px", height: "300px" }}
+              src="/static/gardeners.png"
+              alt="gardeners"
+            />
+          </div>
+          <div className="col col-md-8 col-lg-6 col-xl-4 px-5 py-4 card">
+            <h3>
+              Welcome to <span className="fs-1">ShareGarden!</span>
+            </h3>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label className="form-label" htmlFor="id_username">
+                  Username
+                </label>
+                <input
+                  className={`form-control ${
+                    errors.username ? "is-invalid" : ""
+                  }`}
+                  type="text"
+                  name="username"
+                  autoFocus
+                  autoCapitalize="none"
+                  maxLength="150"
+                  required
+                  id="id_username"
+                  onChange={handleChange}
+                />
+                {errors.username && (
+                  <div className="invalid-feedback">{errors.username[0]}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label" htmlFor="id_password">
+                  Password
+                </label>
+                <input
+                  className={`form-control ${
+                    errors.password ? "is-invalid" : ""
+                  }`}
+                  type="password"
+                  name="password"
+                  required
+                  id="id_password"
+                  onChange={handleChange}
+                />
+                {errors.password && (
+                  <div className="invalid-feedback">{errors.password[0]}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label" htmlFor="id_password2">
+                  Password confirmation
+                </label>
+                <input
+                  className="form-control"
+                  type="password"
+                  name="password2"
+                  required
+                  id="id_password2"
+                  onChange={handleChange}
+                />
+              </div>
 
-        <button type="submit">
-          {isSubmitting ? "loading..." : "Register"}
-        </button>
-      </form>
-    </>
+              <div className="d-grid gap-2 mb-3">
+                <button
+                  className="btn btn-primary"
+                  type="submit"
+                  disabled={isSubmitting ? true : false}
+                >
+                  {isSubmitting ? "loading..." : "Sign up"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

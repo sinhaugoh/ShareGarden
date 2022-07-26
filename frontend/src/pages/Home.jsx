@@ -2,7 +2,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 export default function Home() {
   const { user, logout } = useAuth();
-  console.log("home");
   return (
     <>
       <h1>Home page</h1>
