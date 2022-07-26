@@ -1,9 +1,30 @@
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
+import { Container } from "react-bootstrap";
 export default function Home() {
   const { user, logout } = useAuth();
   return (
     <>
+      <h1>hoho</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
+      <h1>Home page</h1>
       <h1>Home page</h1>
       <Link to="chatroom/">Chatroom</Link>
       {user && <button onClick={logout}>Logout</button>}
@@ -15,6 +36,10 @@ export default function Home() {
               : user.profile_image
           }
           alt="profile"
+          style={{
+            width: "100px",
+            height: "100px",
+          }}
         />
       )}
     </>
