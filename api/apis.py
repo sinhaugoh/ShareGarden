@@ -6,6 +6,7 @@ from django.contrib.auth import logout, authenticate, login
 from .constants import *
 from .serializers import *
 from core.models import *
+import googlemaps
 
 
 class AuthUser(APIView):
@@ -56,5 +57,41 @@ class ItemPostList(APIView):
 
         if not request.user.is_authenticated or not request.user.location:
             return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            # insert distances calculation if the user is authenticated and has location
+            payload = serializer.data.copy()
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            # get the list of posts addresses
+            item_posts_pick_up_location = [
+                item_post.get('location') for item_post in payload]
+
+            gmaps = googlemaps.Client(key=GOOGLE_API_KEY)
+            # calculate distances
+            result = gmaps.distance_matrix(
+                origins=request.user.location, destinations=item_posts_pick_up_location, units="metric")
+            # extract the distances from the result
+            distances = [ele['distance']['text']
+                         for ele in result['rows'][0]['elements']]
+
+            # add the distances into the item posts
+            for i in range(0, len(distances)):
+                payload[i]['distance'] = distances[i]
+
+            # sort the list based on distance (ascending)
+            def sort_by_distance_callback(item_post):
+                distance = item_post.get('distance')
+
+                # convert distance to meter
+                # Example:
+                #   '2.2 km' --> 2200
+                #   '2.2 m' --> 2.2
+                if 'km' in distance:
+                    distance = float(distance[:-3]) * 1000
+                else:
+                    distance = float(distance[:-2])
+
+                return distance
+
+            payload = sorted(payload, key=sort_by_distance_callback)
+
+            return Response(payload, status=status.HTTP_200_OK)

@@ -6,6 +6,7 @@ import RequireAuth from "./components/shared/RequireAuth";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import NavbarBs from "./components/shared/NavbarBs";
 import Container from "react-bootstrap/Container";
+import ItemPostDetail from "./components/item-post-detail/ItemPostDetail";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Home />} />
           <Route path="/register/" element={<Register />} />
+          <Route path="/itempost/:id/" element={<ItemPostDetail />} />
           <Route
             path="/chatroom/"
             element={

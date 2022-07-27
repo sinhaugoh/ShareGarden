@@ -8,6 +8,7 @@ export default function HomeItemCard({
   cover_image,
   description,
   title,
+  distance,
 }) {
   const navigate = useNavigate();
   return (
@@ -34,18 +35,20 @@ export default function HomeItemCard({
         <Card.Text className="text-truncate">
           {description === "" ? "No description provided." : description}
         </Card.Text>
-        <Card.Text className="text-muted mt-auto">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            fill="currentColor"
-            viewBox="0 0 18 18"
-          >
-            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path>
-          </svg>{" "}
-          0.9km away
-        </Card.Text>
+        {distance ? (
+          <Card.Text className="text-muted mt-auto">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="currentColor"
+              viewBox="0 0 18 18"
+            >
+              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path>
+            </svg>{" "}
+            {distance} away
+          </Card.Text>
+        ) : null}
       </Card.Body>
     </Card>
   );
@@ -57,4 +60,5 @@ HomeItemCard.propTypes = {
   cover_image: PropTypes.string,
   description: PropTypes.string,
   title: PropTypes.string,
+  distance: PropTypes.string,
 };
