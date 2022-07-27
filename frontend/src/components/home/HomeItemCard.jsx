@@ -31,7 +31,9 @@ export default function HomeItemCard({
       />
       <Card.Body>
         <Card.Title>{title}</Card.Title>
-        <Card.Text className="text-truncate">{description}</Card.Text>
+        <Card.Text className="text-truncate">
+          {description === "" ? "No description provided." : description}
+        </Card.Text>
         <Card.Text className="text-muted mt-auto">
           <svg
             xmlns="http://www.w3.org/2000/svg"
