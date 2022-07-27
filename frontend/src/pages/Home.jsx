@@ -6,7 +6,7 @@ export default function Home() {
   const { user, logout } = useAuth();
   return (
     <Container className="mt-3">
-      <h1>Discover</h1>
+      <h1 className="mb-3">Discover</h1>
       <HomeItemList />
     </Container>
   );

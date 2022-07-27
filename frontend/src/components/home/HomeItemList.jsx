@@ -18,27 +18,6 @@ export default function HomeItemList() {
           </Col>
         );
       })}
-      <Col className="mb-3">
-        <HomeItemCard />
-      </Col>
-      <Col className="mb-3">
-        <HomeItemCard />
-      </Col>
-      <Col className="mb-3">
-        <HomeItemCard />
-      </Col>
-      <Col className="mb-3">
-        <HomeItemCard />
-      </Col>
-      <Col className="mb-3">
-        <HomeItemCard />
-      </Col>
-      <Col className="mb-3">
-        <HomeItemCard />
-      </Col>
-      <Col className="mb-3">
-        <HomeItemCard />
-      </Col>
     </Row>
   );
 }

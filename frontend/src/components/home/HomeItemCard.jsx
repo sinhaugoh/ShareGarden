@@ -1,14 +1,21 @@
 import { Card } from "react-bootstrap";
 import PropTypes from "prop-types";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function HomeItemCard({
+  id,
   category,
   cover_image,
   description,
   title,
 }) {
+  const navigate = useNavigate();
   return (
-    <Card className="position-relative h-100">
+    <Card
+      className="position-relative h-100"
+      onClick={() => navigate(`/itempost/${id}/`)}
+      style={{ cursor: "pointer" }}
+    >
       <div
         className="position-absolute end-0 opacity-75 bg-dark w-25"
         style={{ borderRadius: "0rem 0.375rem 0rem 0rem" }}
@@ -19,6 +26,7 @@ export default function HomeItemCard({
         variant="top"
         src={cover_image}
         height="200px"
+        className="border-bottom"
         style={{ objectFit: "cover" }}
       />
       <Card.Body>
@@ -42,6 +50,7 @@ export default function HomeItemCard({
 }
 
 HomeItemCard.propTypes = {
+  id: PropTypes.number,
   category: PropTypes.string,
   cover_image: PropTypes.string,
   description: PropTypes.string,
