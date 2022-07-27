@@ -49,8 +49,12 @@ class Register(APIView):
 
 class ItemPostList(APIView):
     def get(self, request):
-        item_posts = ItemPost.objects.all().order_by('-created_by')
+        # query for item posts which exclude those that are posted by the logged in user
+        item_posts = ItemPost.objects.exclude(
+            created_by=request.user.id).all().order_by('-created_by')
         serializer = ItemPostListSerializer(instance=item_posts, many=True)
 
         if not request.user.is_authenticated or not request.user.location:
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
