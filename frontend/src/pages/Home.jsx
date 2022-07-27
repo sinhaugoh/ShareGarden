@@ -1,47 +1,13 @@
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { Container } from "react-bootstrap";
+import HomeItemList from "../components/home/HomeItemList";
 export default function Home() {
   const { user, logout } = useAuth();
   return (
-    <>
-      <h1>hoho</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <h1>Home page</h1>
-      <Link to="chatroom/">Chatroom</Link>
-      {user && <button onClick={logout}>Logout</button>}
-      {user && (
-        <img
-          src={
-            user.profile_image === null
-              ? "/static/default_profile_pic.png"
-              : user.profile_image
-          }
-          alt="profile"
-          style={{
-            width: "100px",
-            height: "100px",
-          }}
-        />
-      )}
-    </>
+    <Container className="mt-3">
+      <h1>Discover</h1>
+      <HomeItemList />
+    </Container>
   );
 }
