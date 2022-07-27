@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from .storage import OverwriteFileStorage
 
 # Create your models here.
 
@@ -9,7 +10,7 @@ def get_profile_image_path(instance, filename):
 
 
 def get_item_image_path(instance, filename):
-    return 'images/item_posts/{}/images/{}'.format(str(instance.post.id), filename)
+    return 'images/item_posts/{}/images/{}'.format(str(instance.post.pk), filename)
 
 
 def get_item_cover_image_path(instance, filename):
@@ -18,7 +19,7 @@ def get_item_cover_image_path(instance, filename):
 
 class User(AbstractUser):
     profile_image = models.ImageField(null=True, blank=True,
-                                      upload_to=get_profile_image_path)
+                                      upload_to=get_profile_image_path, storage=OverwriteFileStorage())
     about = models.CharField(max_length=500, null=True, blank=True)
     location = models.CharField(max_length=500, null=True, blank=True)
 
@@ -71,7 +72,7 @@ class ItemPost(models.Model):
     soil_type = models.CharField(
         max_length=20, choices=SoilType.choices, default=SoilType.NONE)
     light_requirement = models.CharField(
-        max_length=20, choices=SoilType.choices, default=LightRequirement.NONE)
+        max_length=20, choices=LightRequirement.choices, default=LightRequirement.NONE)
     optimal_temperature = models.SmallIntegerField(null=True, blank=True)
     category = models.CharField(max_length=20, choices=Category.choices)
     item_type = models.CharField(max_length=20, choices=ItemType.choices)
@@ -79,11 +80,24 @@ class ItemPost(models.Model):
     water_requirement = models.CharField(
         max_length=20, choices=WaterRequirement.choices, default=WaterRequirement.NONE)
     growing_tips = models.TextField(max_length=500, null=True, blank=True)
-    cover_image = models.ImageField(upload_to=get_item_cover_image_path)
+    cover_image = models.ImageField(
+        upload_to=get_item_cover_image_path, storage=OverwriteFileStorage())
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            # make instance pk retrievable when storing image
+            temp = self.cover_image
+            self.cover_image = None
+            super(ItemPost, self).save(*args, **kwargs)
+            self.image = temp
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(ItemPost, self).save(*args, **kwargs)
 
 
 class ItemPostImage(models.Model):

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from core.models import ItemPost
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -35,3 +36,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
+class ItemPostListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemPost
+        fields = [
+            'title',
+            'description',
+            'location',
+            'category',
+            'cover_image'
+        ]
