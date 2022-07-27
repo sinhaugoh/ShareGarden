@@ -1,26 +1,30 @@
 import { Card } from "react-bootstrap";
-export default function HomeItemCard() {
+import PropTypes from "prop-types";
+
+export default function HomeItemCard({
+  category,
+  cover_image,
+  description,
+  title,
+}) {
   return (
-    <Card className="position-relative">
+    <Card className="position-relative h-100">
       <div
-        className="position-absolute end-0 opacity-75 bg-dark"
+        className="position-absolute end-0 opacity-75 bg-dark w-25"
         style={{ borderRadius: "0rem 0.375rem 0rem 0rem" }}
       >
-        <div className="text-white px-2 py-1">Giveaway</div>
+        <div className="text-white px-2 py-1 text-center">{category}</div>
       </div>
       <Card.Img
         variant="top"
-        src="/static/default_profile_pic.png"
+        src={cover_image}
         height="200px"
         style={{ objectFit: "cover" }}
       />
       <Card.Body>
-        <Card.Title>Tomato seeds</Card.Title>
-        <Card.Text>
-          Some quick example text to build on the card title and make up the
-          bulk of the card's content
-        </Card.Text>
-        <Card.Text className="text-muted">
+        <Card.Title>{title}</Card.Title>
+        <Card.Text className="text-truncate">{description}</Card.Text>
+        <Card.Text className="text-muted mt-auto">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="18"
@@ -36,3 +40,10 @@ export default function HomeItemCard() {
     </Card>
   );
 }
+
+HomeItemCard.propTypes = {
+  category: PropTypes.string,
+  cover_image: PropTypes.string,
+  description: PropTypes.string,
+  title: PropTypes.string,
+};
