@@ -8,7 +8,84 @@ def get_profile_image_path(instance, filename):
     return 'images/profile_images/{}/profile_image.jpg'.format(str(instance.pk))
 
 
+def get_item_image_path(instance, filename):
+    return 'images/item_posts/{}/images/{}'.format(str(instance.post.id), filename)
+
+
+def get_item_cover_image_path(instance, filename):
+    return 'images/item_posts/{}/cover_image.jpg'.format(str(instance.pk))
+
+
 class User(AbstractUser):
     profile_image = models.ImageField(null=True, blank=True,
                                       upload_to=get_profile_image_path)
     about = models.CharField(max_length=500, null=True, blank=True)
+    location = models.CharField(max_length=500, null=True, blank=True)
+
+
+class ItemPost(models.Model):
+    class Category(models.TextChoices):
+        '''Category enum'''
+        GIVEAWAY = 'Giveaway'
+        LEND = 'Lend'
+        REQUEST = 'Request'
+
+    class ItemType(models.TextChoices):
+        '''Item type enum'''
+        SEED_OR_PLANT = 'Seed/Plant'
+        FERTILIZER = 'Fertilizer'
+        GARDENING_TOOL = 'Gardening tool'
+        POT = 'Pot'
+
+    class WaterRequirement(models.TextChoices):
+        '''Water requirement enum'''
+        NONE = 'None'
+        LOW = 'Low'
+        MODERATE = 'Moderate'
+        MEDIUM = 'Medium'
+        HIGH = 'High'
+        INTENSIVE = 'Intensive'
+
+    class SoilType(models.TextChoices):
+        '''Soil type enum'''
+        NONE = 'None'
+        CHALK = 'Chalk'
+        CLAY = 'Clay'
+        PEAT = 'Peat'
+        LOAM = 'Loam'
+        SANDY_SOIL = 'Sandy soil'
+
+    class LightRequirement(models.TextChoices):
+        '''Light requirement enum'''
+        NONE = 'None'
+        FULL_SUN = 'Full sun'
+        PARTIAL_SHADE = 'Partial shade'
+        SHADE = 'Shade'
+
+    title = models.CharField(max_length=100)
+    description = models.TextField(max_length=500, null=True, blank=True)
+    quantity = models.PositiveSmallIntegerField()
+    pick_up_information = models.TextField(max_length=256)
+    location = models.CharField(max_length=500)
+    characteristics = models.TextField(max_length=500, null=True, blank=True)
+    soil_type = models.CharField(
+        max_length=20, choices=SoilType.choices, default=SoilType.NONE)
+    light_requirement = models.CharField(
+        max_length=20, choices=SoilType.choices, default=LightRequirement.NONE)
+    optimal_temperature = models.SmallIntegerField(null=True, blank=True)
+    category = models.CharField(max_length=20, choices=Category.choices)
+    item_type = models.CharField(max_length=20, choices=ItemType.choices)
+    days_to_harvest = models.PositiveSmallIntegerField(null=True, blank=True)
+    water_requirement = models.CharField(
+        max_length=20, choices=WaterRequirement.choices, default=WaterRequirement.NONE)
+    growing_tips = models.TextField(max_length=500, null=True, blank=True)
+    cover_image = models.ImageField(upload_to=get_item_cover_image_path)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+
+
+class ItemPostImage(models.Model):
+    post = models.ForeignKey(ItemPost, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=get_item_image_path)
