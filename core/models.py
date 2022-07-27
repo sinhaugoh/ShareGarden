@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .storage import OverwriteFileStorage
+import uuid
 
 # Create your models here.
 
@@ -10,11 +11,11 @@ def get_profile_image_path(instance, filename):
 
 
 def get_item_image_path(instance, filename):
-    return 'images/item_posts/{}/images/{}'.format(str(instance.post.pk), filename)
+    return 'images/item_posts/{}/images/{}'.format(str(instance.item_post.uuid), filename)
 
 
 def get_item_cover_image_path(instance, filename):
-    return 'images/item_posts/{}/cover_image.jpg'.format(str(instance.pk))
+    return 'images/item_posts/{}/cover_image.jpg'.format(str(instance.uuid))
 
 
 class User(AbstractUser):
@@ -86,20 +87,10 @@ class ItemPost(models.Model):
     is_active = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-
-    def save(self, *args, **kwargs):
-        if self.pk is None:
-            # make instance pk retrievable when storing image
-            temp = self.cover_image
-            self.cover_image = None
-            super(ItemPost, self).save(*args, **kwargs)
-            self.image = temp
-            if 'force_insert' in kwargs:
-                kwargs.pop('force_insert')
-
-        super(ItemPost, self).save(*args, **kwargs)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
 
 class ItemPostImage(models.Model):
-    post = models.ForeignKey(ItemPost, on_delete=models.CASCADE)
+    item_post = models.ForeignKey(ItemPost, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=get_item_image_path)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)

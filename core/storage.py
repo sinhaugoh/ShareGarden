@@ -4,7 +4,7 @@ import os
 
 
 class OverwriteFileStorage(FileSystemStorage):
-    def get_available_name(self, name, _):
+    def get_available_name(self, name, max_length):
         # remove old file if new one has the same name
         if self.exists(name):
             os.remove(os.path.join(settings.MEDIA_ROOT, name))
