@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function useFetch(url, options) {
   const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -10,7 +10,7 @@ export default function useFetch(url, options) {
       try {
         setIsLoading(true);
         const response = await fetch(url, options);
-        const data = await response.data();
+        const data = await response.json();
 
         console.log("data", data);
         if (response.status === 400) {
