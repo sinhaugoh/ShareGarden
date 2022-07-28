@@ -74,7 +74,6 @@ class ItemPost(models.Model):
         max_length=20, choices=SoilType.choices, default=SoilType.NONE)
     light_requirement = models.CharField(
         max_length=20, choices=LightRequirement.choices, default=LightRequirement.NONE)
-    optimal_temperature = models.SmallIntegerField(null=True, blank=True)
     category = models.CharField(max_length=20, choices=Category.choices)
     item_type = models.CharField(max_length=20, choices=ItemType.choices)
     days_to_harvest = models.PositiveSmallIntegerField(null=True, blank=True)
