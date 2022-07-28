@@ -61,6 +61,8 @@ export default function CreateItemPostFormModal() {
 
     if (response.status === 201) {
       console.log("post created!!");
+      clearFormData();
+      toggleCreateItemPostModal();
     } else if (response.status === 400) {
       let data = await response.json();
       setFormErrors(data);
