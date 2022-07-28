@@ -1,4 +1,7 @@
-import { Accordion, Row, Col, Form, Modal } from "react-bootstrap";
+import { Accordion, Row, Col, Form, Modal, Button } from "react-bootstrap";
+import TextFieldBs from "./form/TextFieldBs";
+import SelectFieldBs from "./form/SelectFieldBs";
+import TextAreaFieldBs from "./form/TextAreaFieldBs";
 import { useEffect, useState } from "react";
 import {
   Category,
@@ -9,6 +12,7 @@ import {
 } from "../../constants";
 import { useCreateItemPost } from "../../contexts/CreateItemPostContext";
 import { MAXIMUM_POST_IMAGE_COUNT } from "../../constants";
+import { getCookie } from "../../utils";
 
 export default function CreateItemPostFormModal() {
   const DEFAULT_STATE = {
@@ -22,10 +26,47 @@ export default function CreateItemPostFormModal() {
   const { isOpenCreateItemPostModal, toggleCreateItemPostModal } =
     useCreateItemPost();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const [formInputs, setFormInputs] = useState(DEFAULT_STATE);
 
   async function handleSubmit(event) {
     event.preventDefault();
+    const formData = new FormData();
+
+    for (const key in formInputs) {
+      // loop through each image in images property
+      if (key === "images") {
+        for (const image of formInputs[key]) {
+          formData.append(key, image, image.name);
+        }
+        continue;
+      }
+
+      if (key === "cover_image") {
+        formData.append(key, formInputs[key]?.[0], formInputs[key]?.[0].name);
+        continue;
+      }
+
+      formData.append(key, formInputs[key] ?? "");
+    }
+
+    setIsSubmitting(true);
+    let response = await fetch("/api/itemposts/", {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+    });
+
+    if (response.status === 201) {
+      console.log("post created!!");
+    } else if (response.status === 400) {
+      let data = await response.json();
+      setFormErrors(data);
+      console.log("error 400", data);
+    }
+    setIsSubmitting(false);
   }
 
   function handleChange(event) {
@@ -52,6 +93,12 @@ export default function CreateItemPostFormModal() {
     }
   }
 
+  function clearFormData() {
+    // clear form inputs and errors after the user close the modal
+    setFormInputs(DEFAULT_STATE);
+    setFormErrors({});
+  }
+
   console.log("form input", formInputs);
 
   return (
@@ -62,9 +109,7 @@ export default function CreateItemPostFormModal() {
       scrollable={true}
       keyboard={false}
       onHide={() => {
-        // clear form inputs after the user close the modal
-        setFormInputs(DEFAULT_STATE);
-
+        clearFormData();
         toggleCreateItemPostModal();
       }}
     >
@@ -72,9 +117,17 @@ export default function CreateItemPostFormModal() {
         <Modal.Title>Share resources</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit}>
+        <Form>
           <Row>
             <Col sm={6} className="mb-3">
+              <SelectFieldBs
+                label="Category"
+                name="category"
+                onChange={handleChange}
+                selectionObject={Category}
+              />
+              {/*
+
               <Form.Group>
                 <Form.Label>Category</Form.Label>
                 <Form.Select name="category" onChange={handleChange}>
@@ -85,8 +138,16 @@ export default function CreateItemPostFormModal() {
                   ))}
                 </Form.Select>
               </Form.Group>
+      */}
             </Col>
             <Col sm={6} className="mb-3">
+              <SelectFieldBs
+                label="Item type"
+                name="item_type"
+                onChange={handleChange}
+                selectionObject={ItemType}
+              />
+              {/*
               <Form.Group>
                 <Form.Label>Item type</Form.Label>
                 <Form.Select name="item_type" onChange={handleChange}>
@@ -97,6 +158,7 @@ export default function CreateItemPostFormModal() {
                   ))}
                 </Form.Select>
               </Form.Group>
+      */}
             </Col>
           </Row>
           <Row>
@@ -104,18 +166,25 @@ export default function CreateItemPostFormModal() {
               <Form.Group>
                 <Form.Label>Cover image</Form.Label>
                 <Form.Control
+                  className={formErrors.cover_image && "is-invalid"}
                   name="cover_image"
                   type="file"
                   onChange={handleSingleImageUploadChange}
                   accept="image/png, image/jpeg"
                 />
+                {formErrors.cover_image && (
+                  <Form.Text className="invalid-feedback">
+                    {formErrors.cover_image}
+                  </Form.Text>
+                )}
               </Form.Group>
             </Col>
             <Col sm={6} className="mb-3">
               <Form.Group>
                 <Form.Label>Image(s)</Form.Label>
                 <Form.Control
-                  name="images[]"
+                  className={formErrors.images && "is-invalid"}
+                  name="images"
                   type="file"
                   multiple
                   onChange={handleMultipleImagesUploadChange}
@@ -124,25 +193,67 @@ export default function CreateItemPostFormModal() {
                 <Form.Text>
                   Maximum of {MAXIMUM_POST_IMAGE_COUNT} images are allowed.
                 </Form.Text>
+                {formErrors.images && (
+                  <Form.Text className="invalid-feedback">
+                    {formErrors.images}
+                  </Form.Text>
+                )}
               </Form.Group>
             </Col>
           </Row>
-          <Form.Group className="mb-3">
+          <TextFieldBs
+            className="mb-3"
+            label="Title"
+            name="title"
+            onChange={handleChange}
+            error={formErrors.title}
+          />
+          {/*
+<Form.Group className="mb-3">
             <Form.Label>Title</Form.Label>
-            <Form.Control type="text" name="title" onChange={handleChange} />
-          </Form.Group>
+            <Form.Control
+              className={formErrors.title && "is-invalid"}
+              type="text"
+              name="title"
+              onChange={handleChange}
+            />
+            {formErrors.title && (
+              <Form.Text className="invalid-feedback">
+                {formErrors.title}
+              </Form.Text>
+            )}
+         </Form.Group> 
+      */}
+
+          <TextAreaFieldBs
+            className="mb-3"
+            label="Description (optional)"
+            name="description"
+            rows={3}
+            onChange={handleChange}
+            error={formErrors.description}
+          />
+          {/*
           <Form.Group className="mb-3">
             <Form.Label>Description (optional)</Form.Label>
             <Form.Control
+              className={formErrors.description && "is-invalid"}
               as="textarea"
               name="description"
               rows={3}
               onChange={handleChange}
             />
+            {formErrors.description && (
+              <Form.Text className="invalid-feedback">
+                {formErrors.description}
+              </Form.Text>
+            )}
           </Form.Group>
+      */}
           <Form.Group className="mb-3">
             <Form.Label>Quantity</Form.Label>
             <Form.Control
+              className={formErrors.quantity && "is-invalid"}
               type="number"
               min="1"
               max="100"
@@ -151,7 +262,28 @@ export default function CreateItemPostFormModal() {
               name="quantity"
               onChange={handleChange}
             />
+            {formErrors.quantity && (
+              <Form.Text className="invalid-feedback">
+                {formErrors.quantity}
+              </Form.Text>
+            )}
           </Form.Group>
+          <TextAreaFieldBs
+            className="mb-3"
+            label="Pick up information"
+            rows={3}
+            placeholder={
+              formInputs.category === Category.LEND
+                ? "e.g. Lending for 3 days. Collection at my house."
+                : formInputs.category === Category.REQUEST
+                ? "e.g. I can come over to your place during weekend."
+                : "e.g. Saturday 9pm onwards."
+            }
+            name="pick_up_information"
+            onChange={handleChange}
+            error={formErrors.pick_up_information}
+          />
+          {/*
           <Form.Group className="mb-3">
             <Form.Label>Pick up information</Form.Label>
             <Form.Control
@@ -168,37 +300,72 @@ export default function CreateItemPostFormModal() {
               onChange={handleChange}
             />
           </Form.Group>
+      */}
+          <TextFieldBs
+            className="mb-3"
+            label="Pick up location"
+            name="location"
+            onChange={handleChange}
+            error={formErrors.location}
+          />
+          {/*
+
           <Form.Group className="mb-3">
             <Form.Label>Pick up location</Form.Label>
             <Form.Control type="text" name="location" onChange={handleChange} />
           </Form.Group>
+      */}
 
           {formInputs.category === Category.GIVEAWAY &&
             formInputs.item_type === ItemType.SEED_OR_PLANT && (
               <>
+                <TextAreaFieldBs
+                  className="mb-3"
+                  label="Seed/plant characteristics"
+                  rows={3}
+                  placeholder="Red in color. Spicy..."
+                  name="characteristics"
+                  onChange={handleChange}
+                  error={formErrors.characteristics}
+                />
+                {/*
                 <Form.Group className="mb-3">
                   <Form.Label>Seed/plant characteristics</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
                     placeholder="Red in color. Spicy..."
-                    name="pick_up_information"
+                    name="characteristics"
                     onChange={handleChange}
                   />
                 </Form.Group>
+                */}
                 <Row className="mb-3">
                   <Col sm={6}>
                     <Form.Group>
                       <Form.Label>Days to harvest (optional)</Form.Label>
                       <Form.Control
+                        className={formErrors.days_to_harvest && "is-invalid"}
                         type="number"
                         step="1"
                         name="days_to_harvest"
                         onChange={handleChange}
                       />
+                      {formErrors.days_to_harvest && (
+                        <Form.Text className="invalid-feedback">
+                          {formErrors.days_to_harvest}
+                        </Form.Text>
+                      )}
                     </Form.Group>
                   </Col>
                   <Col sm={6}>
+                    <SelectFieldBs
+                      label="Water requirements"
+                      name="water_requirement"
+                      onChange={handleChange}
+                      selectionObject={WaterRequirement}
+                    />
+                    {/*
                     <Form.Group>
                       <Form.Label>Water Requirements</Form.Label>
                       <Form.Select
@@ -212,6 +379,7 @@ export default function CreateItemPostFormModal() {
                         ))}
                       </Form.Select>
                     </Form.Group>
+                */}
                   </Col>
                 </Row>
                 <Accordion>
@@ -222,6 +390,14 @@ export default function CreateItemPostFormModal() {
                     <Accordion.Body>
                       <Row>
                         <Col sm={6}>
+                          <SelectFieldBs
+                            className="mb-3"
+                            label="Soil type"
+                            name="soil_type"
+                            onChange={handleChange}
+                            selectionObject={SoilType}
+                          />
+                          {/*
                           <Form.Group>
                             <Form.Label>Soil type</Form.Label>
                             <Form.Select
@@ -235,8 +411,17 @@ export default function CreateItemPostFormModal() {
                               ))}
                             </Form.Select>
                           </Form.Group>
+                */}
                         </Col>
                         <Col sm={6}>
+                          <SelectFieldBs
+                            className="mb-3"
+                            label="Light requirement"
+                            name="light_requirement"
+                            onChange={handleChange}
+                            selectionObject={LightRequirement}
+                          />
+                          {/*
                           <Form.Group>
                             <Form.Label>Light requirement</Form.Label>
                             <Form.Select
@@ -255,8 +440,18 @@ export default function CreateItemPostFormModal() {
                               )}
                             </Form.Select>
                           </Form.Group>
+                */}
                         </Col>
                       </Row>
+                      <TextAreaFieldBs
+                        className="mb-3"
+                        label="Important growing tips (optional)"
+                        rows={3}
+                        name="growing_tips"
+                        onChange={handleChange}
+                        error={formErrors.growing_tips}
+                      />
+                      {/*
                       <Form.Group>
                         <Form.Label>
                           Important growing tips (optional)
@@ -268,6 +463,7 @@ export default function CreateItemPostFormModal() {
                           onChange={handleChange}
                         />
                       </Form.Group>
+                */}
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
@@ -275,6 +471,24 @@ export default function CreateItemPostFormModal() {
             )}
         </Form>
       </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            clearFormData();
+            toggleCreateItemPostModal();
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Creating..." : "Create"}
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 }

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from core.models import ItemPost
+from core.models import ItemPost, ItemPostImage
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -49,3 +49,56 @@ class ItemPostListSerializer(serializers.ModelSerializer):
             'category',
             'cover_image'
         ]
+
+
+class CreateItemPostSerializer(serializers.ModelSerializer):
+    images = serializers.ListField(
+        child=serializers.ImageField(), required=False)
+    quantity = serializers.IntegerField(min_value=1, max_value=99)
+    days_to_harvest = serializers.IntegerField(
+        min_value=1, max_value=999, required=False)
+
+    class Meta:
+        model = ItemPost
+        fields = [
+            'title',
+            'description',
+            'quantity',
+            'pick_up_information',
+            'category',
+            'item_type',
+            'days_to_harvest',
+            'water_requirement',
+            'growing_tips',
+            'location',
+            'date_created',
+            'date_modified',
+            'images',
+            'characteristics',
+            'soil_type',
+            'light_requirement',
+            'cover_image'
+        ]
+
+    def validate_images(self, value):
+        if len(value) > 5:
+            # throw validation error if number of images more than 5
+            raise serializers.ValidationError('Upload count exceeded.')
+
+        return value
+
+    def create(self, validated_data):
+        images = validated_data.pop('images', None)
+
+        item_post = ItemPost.objects.create(
+            **validated_data, created_by=self.context['request'].user)
+
+        # bulk create PostImage
+        post_images = []
+        if images is not None:
+            for image in images:
+                post_images.append(ItemPostImage(
+                    item_post=item_post, image=image))
+            ItemPostImage.objects.bulk_create(post_images)
+
+        return item_post

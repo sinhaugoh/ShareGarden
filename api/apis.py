@@ -95,3 +95,13 @@ class ItemPostList(APIView):
             payload = sorted(payload, key=sort_by_distance_callback)
 
             return Response(payload, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = CreateItemPostSerializer(
+            data=request.data, context={'request': request})
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data={'status': 'success'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
