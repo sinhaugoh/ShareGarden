@@ -16,7 +16,6 @@ export default function HomeItemList() {
         const response = await fetch("/api/itemposts/");
         const data = await response.json();
 
-        console.log("data", data);
         if (response.status === 400) {
           setError(data);
         } else if (response.status > 400 && response.status < 600) {

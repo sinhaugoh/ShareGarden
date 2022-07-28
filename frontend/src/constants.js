@@ -19,3 +19,21 @@ export const WaterRequirement = {
   HIGH: "High",
   INTENSIVE: "Intensive",
 };
+
+export const SoilType = {
+  NONE: "None",
+  CHALK: "Chalk",
+  CLAY: "Clay",
+  PEAT: "Peat",
+  LOAM: "Loam",
+  SANDY_SOIL: "Sandy soil",
+};
+
+export const LightRequirement = {
+  NONE: "None",
+  FULL_SUN: "Full sun",
+  PARTIAL_SHADE: "Partial shade",
+  SHADE: "Shade",
+};
+
+export const MAXIMUM_POST_IMAGE_COUNT = 5;
