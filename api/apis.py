@@ -52,10 +52,10 @@ class ItemPostList(APIView):
     def get(self, request):
         # query for item posts which exclude those that are posted by the logged in user
         item_posts = ItemPost.objects.exclude(
-            created_by=request.user.id).all().order_by('-created_by')
+            created_by=request.user.id).filter(is_active=True).order_by('-created_by')
         serializer = ItemPostListSerializer(instance=item_posts, many=True)
 
-        if not request.user.is_authenticated or not request.user.location:
+        if not request.user.is_authenticated or not request.user.location or not item_posts:
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             # insert distances calculation if the user is authenticated and has location
