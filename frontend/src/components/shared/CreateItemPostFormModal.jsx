@@ -2,7 +2,8 @@ import { Accordion, Row, Col, Form, Modal, Button } from "react-bootstrap";
 import TextFieldBs from "./form/TextFieldBs";
 import SelectFieldBs from "./form/SelectFieldBs";
 import TextAreaFieldBs from "./form/TextAreaFieldBs";
-import { useEffect, useState } from "react";
+import LocationAutocompleteFieldBs from "./form/LocationAutocompleteFieldBs";
+import { useState } from "react";
 import {
   Category,
   ItemType,
@@ -11,8 +12,9 @@ import {
   LightRequirement,
 } from "../../constants";
 import { useCreateItemPost } from "../../contexts/CreateItemPostContext";
-import { MAXIMUM_POST_IMAGE_COUNT } from "../../constants";
+import { MAXIMUM_POST_IMAGE_COUNT, GOOGLE_MAP_API_KEY } from "../../constants";
 import { getCookie } from "../../utils";
+import { usePlacesWidget } from "react-google-autocomplete";
 
 export default function CreateItemPostFormModal() {
   const DEFAULT_STATE = {
@@ -75,6 +77,13 @@ export default function CreateItemPostFormModal() {
     setFormInputs((inputs) => ({
       ...inputs,
       [event.target.name]: event.target.value,
+    }));
+  }
+
+  function handleLocationChange(newLocation) {
+    setFormInputs((inputs) => ({
+      ...inputs,
+      location: newLocation,
     }));
   }
 
@@ -303,12 +312,13 @@ export default function CreateItemPostFormModal() {
             />
           </Form.Group>
       */}
-          <TextFieldBs
+          <LocationAutocompleteFieldBs
             className="mb-3"
             label="Pick up location"
             name="location"
-            onChange={handleChange}
+            onChange={handleLocationChange}
             error={formErrors.location}
+            apiKey={GOOGLE_MAP_API_KEY}
           />
           {/*
 

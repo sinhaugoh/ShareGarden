@@ -7,6 +7,7 @@ export default function TextFieldBs({
   onChange,
   placeholder,
   name,
+  innerRef,
 }) {
   return (
     <Form.Group className={className}>
@@ -17,6 +18,7 @@ export default function TextFieldBs({
         name={name}
         placeholder={placeholder}
         onChange={onChange}
+        ref={innerRef}
       />
       {error && <Form.Text className="invalid-feedback">{error}</Form.Text>}
     </Form.Group>
