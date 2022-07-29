@@ -1,3 +1,31 @@
 .pac-container {
   z-index: 10000 !important;
 }
+
+/* item detail carousel */
+.item-detail-carousel-img {
+  height: 500px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  height: 50px;
+  width: 50px;
+  background-color: black;
+  border-radius: 100%;
+  background-image: none;
+}
+
+.carousel-control-next-icon::after {
+  content: ">";
+  font-size: 28px;
+  color: white;
+}
+
+.carousel-control-prev-icon::after {
+  content: "<";
+  font-size: 28px;
+  color: white;
+}

@@ -37,6 +37,7 @@ export const LightRequirement = {
 };
 
 export const MAXIMUM_POST_IMAGE_COUNT = 5;
+export const DEFAULT_PROFILE_PIC_PATH = "/static/default_profile_pic.png";
 
 // API Keys
 export const GOOGLE_MAP_API_KEY = "AIzaSyCzng3iNJKkdXgiMjmyAI-3IMczHeZ06tA";
