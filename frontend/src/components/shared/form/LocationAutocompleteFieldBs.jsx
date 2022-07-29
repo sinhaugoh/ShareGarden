@@ -20,7 +20,6 @@ export default function LocationAutocompleteFieldBs({
       types: [],
     },
   });
-  console.log("ref", ref.current);
 
   return (
     <Form.Group className={className}>

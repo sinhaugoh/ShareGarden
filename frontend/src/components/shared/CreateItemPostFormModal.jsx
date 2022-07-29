@@ -14,7 +14,6 @@ import {
 import { useCreateItemPost } from "../../contexts/CreateItemPostContext";
 import { MAXIMUM_POST_IMAGE_COUNT, GOOGLE_MAP_API_KEY } from "../../constants";
 import { getCookie } from "../../utils";
-import { usePlacesWidget } from "react-google-autocomplete";
 
 export default function CreateItemPostFormModal() {
   const DEFAULT_STATE = {

@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from core.models import ItemPost, ItemPostImage
+import googlemaps
+from .constants import GOOGLE_API_KEY
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -84,6 +86,16 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
         if len(value) > 5:
             # throw validation error if number of images more than 5
             raise serializers.ValidationError('Upload count exceeded.')
+
+        return value
+
+    def validate_location(self, value):
+        gmaps = googlemaps.Client(key=GOOGLE_API_KEY)
+        # raise validation error if the google map api cannot geocode the address
+        result = gmaps.geocode(value)
+        if not result:
+            raise serializers.ValidationError(
+                'Please provide a valid address.')
 
         return value
 
