@@ -7,6 +7,7 @@ from django.contrib.auth import logout, authenticate, login
 from .constants import *
 from .serializers import *
 from core.models import *
+from django.db.models import Q
 import googlemaps
 
 
@@ -49,11 +50,42 @@ class Register(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserApi(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = "username"
+
+
 class ItemPostList(APIView):
     def get(self, request):
-        # query for item posts which exclude those that are posted by the logged in user
-        item_posts = ItemPost.objects.exclude(
-            created_by=request.user.id).filter(is_active=True).order_by('-date_created')
+        q_objects_for_filter = Q()
+        q_objects_for_exclude = Q()
+
+        if not request.query_params:
+            # if no query param given, that means show only active posts and exclude posts posted
+            # by the logged in user
+            # item_posts_queryset = ItemPost.objects.exclude(
+            #     created_by=request.user.id).filter(is_active=True).order_by('-date_created')
+            q_objects_for_exclude.add(Q(created_by=request.user.id), Q.AND)
+            q_objects_for_filter.add(Q(is_active=True), Q.AND)
+        else:
+            # retrieve filters
+            user_filter = request.query_params.get('username')
+
+            # include optional filters
+            if user_filter:
+                print('hoh')
+                # this filter is used in profile page
+                try:
+                    user = User.objects.get(username=user_filter)
+                    q_objects_for_filter.add(Q(created_by=user), Q.AND)
+                except User.DoesNotExist:
+                    return Response({'detail': 'Queried user not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # retrieve item posts with applied filters
+        item_posts = ItemPost.objects.exclude(q_objects_for_exclude).filter(
+            q_objects_for_filter).order_by('-date_created')
+
         serializer = ItemPostListSerializer(instance=item_posts, many=True)
 
         if not request.user.is_authenticated or not request.user.location or not item_posts:

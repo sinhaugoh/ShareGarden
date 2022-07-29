@@ -12,7 +12,6 @@ export default function useFetch(url, options) {
         const response = await fetch(url, options);
         const data = await response.json();
 
-        console.log("data", data);
         if (response.status === 400) {
           setError(data);
         } else if (response.status > 400 && response.status < 600) {

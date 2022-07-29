@@ -83,7 +83,8 @@ class ItemPostListSerializer(serializers.ModelSerializer):
             'description',
             'location',
             'category',
-            'cover_image'
+            'cover_image',
+            'is_active'
         ]
 
 

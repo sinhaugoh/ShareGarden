@@ -7,12 +7,13 @@ import {
   Button,
 } from "react-bootstrap";
 import { useAuth } from "../../contexts/AuthContext";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useCreateItemPost } from "../../contexts/CreateItemPostContext";
 
 export default function NavbarBs() {
   const { user, logout } = useAuth();
   const { toggleCreateItemPostModal } = useCreateItemPost();
+  const navigate = useNavigate();
   return (
     <Navbar expand="lg" sticky="top" className="bg-white shadow-sm">
       <Container>
@@ -39,7 +40,11 @@ export default function NavbarBs() {
                   Chat
                 </Nav.Link>
                 <NavDropdown title={user?.username} align="end">
-                  <NavDropdown.Item>My profile</NavDropdown.Item>
+                  <NavDropdown.Item
+                    onClick={() => navigate(`/profile/${user.username}/`)}
+                  >
+                    My profile
+                  </NavDropdown.Item>
                   <NavDropdown.Item>My listing</NavDropdown.Item>
                   <NavDropdown.Item>My deals</NavDropdown.Item>
                   <NavDropdown.Item as="button" onClick={logout}>

@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { CreateItemPostProvider } from "./contexts/CreateItemPostContext";
 import NavbarBs from "./components/shared/NavbarBs";
 import ItemPostDetail from "./pages/ItemPostDetail";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Routes>
             <Route path="/" exact element={<Home />} />
             <Route path="/register/" element={<Register />} />
+            <Route path="/profile/:username/" element={<Profile />} />
             <Route path="/itempost/:id/" element={<ItemPostDetail />} />
             <Route
               path="/chatroom/"

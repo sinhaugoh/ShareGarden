@@ -8,8 +8,6 @@ import { Link } from "react-router-dom";
 export default function ItemPostDetail() {
   const { id } = useParams();
   const { data, isLoading, error } = useFetch(`/api/itempost/${id}/`);
-  console.log("data", data);
-  console.log("error", error);
 
   //TODO: implement loading
   if (isLoading) return <h1>Loading...</h1>;
@@ -72,27 +70,27 @@ export default function ItemPostDetail() {
         </Col>
         <Col md={6}>
           <h1 className="font-weight-bold">{data.title}</h1>
-          <h4>Description</h4>
+          <h5 className="mt-4">Description</h5>
           <p className="text-break" style={{ maxHeight: "200px" }}>
             {data.description ? data.description : "No description provided"}
           </p>
           <Row>
             <Col sm={6}>
-              <h4>
+              <h5>
                 {data.category === Category.REQUEST
                   ? "Requesting amount"
                   : "Available amount"}
-              </h4>
+              </h5>
               <p>{data.quantity}</p>
             </Col>
             {data.category !== Category.REQUEST && (
               <Col sm={6}>
-                <h4>Location</h4>
+                <h5>Location</h5>
                 <p>{data.location}</p>
               </Col>
             )}
           </Row>
-          <h4>Pick up information</h4>
+          <h5>Pick up information</h5>
           <p>{data.pick_up_information}</p>
         </Col>
       </Row>
@@ -103,19 +101,19 @@ export default function ItemPostDetail() {
             <Row>
               <h3>Additional seed/plant information</h3>
               <Col md={6}>
-                <h4>Characteristic</h4>
+                <h5>Characteristic</h5>
                 <p>
                   {data.characteristics === "None" || !data.characteristics
                     ? "No information provided"
                     : data.characteristics}
                 </p>
-                <h4>Water requirement</h4>
+                <h5>Water requirement</h5>
                 <p>
                   {data.water_requirement === "None" || !data.water_requirement
                     ? "No information provided"
                     : data.water_requirement}
                 </p>
-                <h4>Soil type</h4>
+                <h5>Soil type</h5>
                 <p>
                   {data.soil_type === "None" || !data.soil_type
                     ? "No information provided"
@@ -123,13 +121,13 @@ export default function ItemPostDetail() {
                 </p>
               </Col>
               <Col md={6}>
-                <h4>Growing tips</h4>
+                <h5>Growing tips</h5>
                 <p>
                   {data.growing_tips === "None" || !data.growing_tips
                     ? "No information provided"
                     : data.growing_tips}
                 </p>
-                <h4>Light requirement</h4>
+                <h5>Light requirement</h5>
                 <p>
                   {data.light_requirement === "None" || !data.light_requirement
                     ? "No information provided"
