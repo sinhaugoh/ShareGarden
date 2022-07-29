@@ -17,15 +17,16 @@ export default function ItemPostDetail() {
     return <p>Failed to load the page. Please contact admin for assistance.</p>;
 
   return (
-    <Container className="my-3">
+    <Container className="my-3 bg-white p-3">
       <Row className="mb-3">
         <Col className="d-flex flex-row align-items-center justify-content-between flex-wrap gap-3">
           <div className="d-flex flex-row align-items-center gap-3">
             <Image
               roundedCircle
+              thumbnail
               src={data.created_by.profile_image ?? DEFAULT_PROFILE_PIC_PATH}
               height="70px"
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: "cover", height: "70px", width: "70px" }}
             />
             <h3>
               <span className="fs-1 font-weight-bold">
@@ -50,7 +51,7 @@ export default function ItemPostDetail() {
       </Row>
       <Row className="mb-4">
         <Col md={6}>
-          <Carousel interval={null}>
+          <Carousel interval={null} className="border border-2">
             <Carousel.Item>
               <img
                 className="item-detail-carousel-img"

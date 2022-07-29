@@ -66,27 +66,11 @@ class ItemPostList(APIView):
             item_posts_pick_up_location = [
                 item_post.get('location') for item_post in payload]
 
-            print('user location', request.user.location)
-            print('item post locations', item_posts_pick_up_location)
-
             gmaps = googlemaps.Client(key=GOOGLE_API_KEY)
+
             # calculate distances
             result = gmaps.distance_matrix(
                 origins=request.user.location, destinations=item_posts_pick_up_location, units="metric")
-            print(result)
-
-            # result_elements = result['rows'][0]['elements']
-            # iter_result_elements = iter(result_elements)
-            # # extract the distances from the result
-            # distances = []
-            # for i in range(0, len(item_posts_pick_up_location)):
-            #     if item_posts_pick_up_location[i] == '':
-            #         distances.append('')
-            #         continue
-
-            #     distance_element = next(iter_result_elements)
-            #     distances.append(distance_element.get(
-            #         'distance').get('text') if distance_element.get('distance') else '')
 
             distances = [ele['distance']['text']
                          for ele in result['rows'][0]['elements']]
@@ -95,9 +79,7 @@ class ItemPostList(APIView):
             for i in range(0, len(distances)):
                 payload[i]['distance'] = distances[i]
 
-            print('payload', payload)
             # sort the list based on distance (ascending)
-
             def sort_by_distance_callback(item_post):
                 distance = item_post.get('distance')
 
