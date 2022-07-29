@@ -311,14 +311,16 @@ export default function CreateItemPostFormModal() {
             />
           </Form.Group>
       */}
-          <LocationAutocompleteFieldBs
-            className="mb-3"
-            label="Pick up location"
-            name="location"
-            onChange={handleLocationChange}
-            error={formErrors.location}
-            apiKey={GOOGLE_MAP_API_KEY}
-          />
+          {formInputs.category !== Category.REQUEST && (
+            <LocationAutocompleteFieldBs
+              className="mb-3"
+              label="Pick up location"
+              name="location"
+              onChange={handleLocationChange}
+              error={formErrors.location}
+              apiKey={GOOGLE_MAP_API_KEY}
+            />
+          )}
           {/*
 
           <Form.Group className="mb-3">

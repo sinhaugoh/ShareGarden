@@ -6,7 +6,7 @@ import RequireAuth from "./components/shared/RequireAuth";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { CreateItemPostProvider } from "./contexts/CreateItemPostContext";
 import NavbarBs from "./components/shared/NavbarBs";
-import ItemPostDetail from "./components/item-post-detail/ItemPostDetail";
+import ItemPostDetail from "./pages/ItemPostDetail";
 
 function App() {
   return (

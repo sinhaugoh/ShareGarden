@@ -40,6 +40,40 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+class ItemPostImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemPostImage
+        fields = ['image', 'item_post']
+
+
+class ItemPostSerializer(serializers.ModelSerializer):
+    itempostimage_set = ItemPostImageSerializer(many=True, read_only=True)
+    created_by = UserSerializer(read_only=True)
+
+    class Meta:
+        model = ItemPost
+        fields = [
+            'title',
+            'description',
+            'quantity',
+            'pick_up_information',
+            'category',
+            'item_type',
+            'days_to_harvest',
+            'water_requirement',
+            'growing_tips',
+            'location',
+            'created_by',
+            'date_created',
+            'date_modified',
+            'itempostimage_set',
+            'characteristics',
+            'soil_type',
+            'light_requirement',
+            'cover_image'
+        ]
+
+
 class ItemPostListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPost
@@ -98,6 +132,14 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
                 'Please provide a valid address.')
 
         return value
+
+    def validate(self, attrs):
+        # raise error if location is not provided for categories (givaway, lend)
+        if attrs['category'] == ItemPost.Category.GIVEAWAY or attrs['category'] == ItemPost.Category.LEND:
+            if not attrs.get('location', None):
+                raise serializers.ValidationError(
+                    {'location': 'Location cannot be empty.'})
+        return attrs
 
     def create(self, validated_data):
         images = validated_data.pop('images', None)

@@ -1,4 +1,5 @@
 from django.http import Http404
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -105,3 +106,8 @@ class ItemPostList(APIView):
             return Response(data={'status': 'success'}, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ItemPostDetail(generics.RetrieveAPIView):
+    serializer_class = ItemPostSerializer
+    queryset = ItemPost.objects.all()
