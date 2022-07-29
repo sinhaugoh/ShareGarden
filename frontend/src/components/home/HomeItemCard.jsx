@@ -33,7 +33,9 @@ export default function HomeItemCard({
       <Card.Body>
         <Card.Title>{title}</Card.Title>
         <Card.Text className="text-truncate">
-          {description === "" ? "No description provided." : description}
+          {description === "" || description === null
+            ? "No description provided."
+            : description}
         </Card.Text>
         {distance ? (
           <Card.Text className="text-muted mt-auto">

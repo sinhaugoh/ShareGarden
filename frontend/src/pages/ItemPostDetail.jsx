@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Container, Row, Col, Image, Button, Carousel } from "react-bootstrap";
 import useFetch from "../hooks/useFetch";
 import { useParams } from "react-router-dom";
-import { DEFAULT_PROFILE_PIC_PATH, Category } from "../constants";
+import { DEFAULT_PROFILE_PIC_PATH, Category, ItemType } from "../constants";
 import { Link } from "react-router-dom";
 
 export default function ItemPostDetail() {
@@ -48,7 +48,7 @@ export default function ItemPostDetail() {
           </Button>
         </Col>
       </Row>
-      <Row>
+      <Row className="mb-4">
         <Col md={6}>
           <Carousel interval={null}>
             <Carousel.Item>
@@ -77,56 +77,67 @@ export default function ItemPostDetail() {
           </p>
           <Row>
             <Col sm={6}>
-              <h4>Available amount</h4>
+              <h4>
+                {data.category === Category.REQUEST
+                  ? "Requesting amount"
+                  : "Available amount"}
+              </h4>
               <p>{data.quantity}</p>
             </Col>
-            <Col sm={6}>
-              <h4>Location</h4>
-              <p>{data.location}</p>
-            </Col>
+            {data.category !== Category.REQUEST && (
+              <Col sm={6}>
+                <h4>Location</h4>
+                <p>{data.location}</p>
+              </Col>
+            )}
           </Row>
           <h4>Pick up information</h4>
           <p>{data.pick_up_information}</p>
         </Col>
       </Row>
-      <hr />
-      <h3>Additional seed/plant information</h3>
-      <Row>
-        <Col md={6}>
-          <h4>Characteristic</h4>
-          <p>
-            {data.characteristics === "None"
-              ? "No information provided"
-              : data.characteristics}
-          </p>
-          <h4>Water requirement</h4>
-          <p>
-            {data.water_requirement === "None"
-              ? "No information provided"
-              : data.water_requirement}
-          </p>
-          <h4>Soil type</h4>
-          <p>
-            {data.soil_type === "None"
-              ? "No information provided"
-              : data.soil_type}
-          </p>
-        </Col>
-        <Col md={6}>
-          <h4>Growing tips</h4>
-          <p>
-            {data.growing_tips === "None"
-              ? "No information provided"
-              : data.growing_tips}
-          </p>
-          <h4>Light requirement</h4>
-          <p>
-            {data.light_requirement === "None"
-              ? "No information provided"
-              : data.light_requirement}
-          </p>
-        </Col>
-      </Row>
+      {data.category === Category.GIVEAWAY &&
+        data.item_type === ItemType.SEED_OR_PLANT && (
+          <div>
+            <hr />
+            <Row>
+              <h3>Additional seed/plant information</h3>
+              <Col md={6}>
+                <h4>Characteristic</h4>
+                <p>
+                  {data.characteristics === "None" || !data.characteristics
+                    ? "No information provided"
+                    : data.characteristics}
+                </p>
+                <h4>Water requirement</h4>
+                <p>
+                  {data.water_requirement === "None" || !data.water_requirement
+                    ? "No information provided"
+                    : data.water_requirement}
+                </p>
+                <h4>Soil type</h4>
+                <p>
+                  {data.soil_type === "None" || !data.soil_type
+                    ? "No information provided"
+                    : data.soil_type}
+                </p>
+              </Col>
+              <Col md={6}>
+                <h4>Growing tips</h4>
+                <p>
+                  {data.growing_tips === "None" || !data.growing_tips
+                    ? "No information provided"
+                    : data.growing_tips}
+                </p>
+                <h4>Light requirement</h4>
+                <p>
+                  {data.light_requirement === "None" || !data.light_requirement
+                    ? "No information provided"
+                    : data.light_requirement}
+                </p>
+              </Col>
+            </Row>
+          </div>
+        )}
     </Container>
   );
 }

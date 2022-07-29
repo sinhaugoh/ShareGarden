@@ -133,13 +133,13 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
 
         return value
 
-    def validate(self, attrs):
-        # raise error if location is not provided for categories (givaway, lend)
-        if attrs['category'] == ItemPost.Category.GIVEAWAY or attrs['category'] == ItemPost.Category.LEND:
-            if not attrs.get('location', None):
-                raise serializers.ValidationError(
-                    {'location': 'Location cannot be empty.'})
-        return attrs
+    # def validate(self, attrs):
+    #     # raise error if location is not provided for categories (givaway, lend)
+    #     if attrs['category'] == ItemPost.Category.GIVEAWAY or attrs['category'] == ItemPost.Category.LEND:
+    #         if not attrs.get('location', None):
+    #             raise serializers.ValidationError(
+    #                 {'location': 'Location cannot be empty.'})
+    #     return attrs
 
     def create(self, validated_data):
         images = validated_data.pop('images', None)

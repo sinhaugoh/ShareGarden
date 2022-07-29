@@ -68,7 +68,7 @@ class ItemPost(models.Model):
     description = models.TextField(max_length=500, null=True, blank=True)
     quantity = models.PositiveSmallIntegerField()
     pick_up_information = models.TextField(max_length=256)
-    location = models.CharField(max_length=500, null=True, blank=True)
+    location = models.CharField(max_length=500)
     characteristics = models.TextField(max_length=500, null=True, blank=True)
     soil_type = models.CharField(
         max_length=20, choices=SoilType.choices, default=SoilType.NONE)
