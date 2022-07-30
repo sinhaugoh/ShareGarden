@@ -43,7 +43,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class ItemPostImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPostImage
-        fields = ['image', 'item_post']
+        fields = ['id', 'image', 'item_post']
 
 
 class ItemPostSerializer(serializers.ModelSerializer):
@@ -89,8 +89,9 @@ class ItemPostListSerializer(serializers.ModelSerializer):
 
 
 class CreateItemPostSerializer(serializers.ModelSerializer):
-    images = serializers.ListField(
-        child=serializers.ImageField(), required=False)
+    # images = serializers.ListField(
+    #     child=serializers.ImageField(), required=False)
+    images = ItemPostImageSerializer(many=True, required=False)
     quantity = serializers.IntegerField(min_value=1, max_value=99)
     days_to_harvest = serializers.IntegerField(
         min_value=1, max_value=999, required=False)
@@ -114,17 +115,21 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
             'characteristics',
             'soil_type',
             'light_requirement',
-            'cover_image'
+            'cover_image',
+            'is_active'
         ]
 
-    def validate_images(self, value):
-        if len(value) > 5:
-            # throw validation error if number of images more than 5
-            raise serializers.ValidationError('Upload count exceeded.')
+    # def validate_images(self, value):
+    #     print('halo')
+    #     print(self.context.get('request'))
+    #     if len(self.context.get('request').data.pop('images')) > 5:
+    #         # throw validation error if number of images more than 5
+    #         raise serializers.ValidationError('Upload count exceeded.')
 
-        return value
+    #     return value
 
     def validate_location(self, value):
+        print('haha')
         gmaps = googlemaps.Client(key=GOOGLE_API_KEY)
         # raise validation error if the google map api cannot geocode the address
         result = gmaps.geocode(value)
@@ -134,21 +139,25 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
 
         return value
 
-    # def validate(self, attrs):
-    #     # raise error if location is not provided for categories (givaway, lend)
-    #     if attrs['category'] == ItemPost.Category.GIVEAWAY or attrs['category'] == ItemPost.Category.LEND:
-    #         if not attrs.get('location', None):
-    #             raise serializers.ValidationError(
-    #                 {'location': 'Location cannot be empty.'})
-    #     return attrs
+    def validate(self, attrs):
+        # have to convert QueryDict into dict so that I am able to get the images in List type
+        request_data_dict = dict(self.context.get('request').data)
+        images = request_data_dict.get('images')
+        # throw validation error if number of images more than 5
+        if len(images) > 5:
+            raise serializers.ValidationError(
+                {'images': 'Upload count exceeded.'})
+        return attrs
 
     def create(self, validated_data):
-        images = validated_data.pop('images', None)
+        # remove is_active field so that it is set to its default value (True for now)
+        del validated_data['is_active']
 
         item_post = ItemPost.objects.create(
             **validated_data, created_by=self.context['request'].user)
 
         # bulk create PostImage
+        images = self.context.get('request').data.pop('images')
         post_images = []
         if images is not None:
             for image in images:
@@ -157,3 +166,7 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
             ItemPostImage.objects.bulk_create(post_images)
 
         return item_post
+
+    def update(self, instance, validated_data):
+
+        return super().update(instance, validated_data)

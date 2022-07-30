@@ -1,18 +1,22 @@
 import { useEffect } from "react";
 import { Container, Row, Col, Image, Button, Carousel } from "react-bootstrap";
 import useFetch from "../hooks/useFetch";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { DEFAULT_PROFILE_PIC_PATH, Category, ItemType } from "../constants";
-import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function ItemPostDetail() {
   const { id } = useParams();
   const { data, isLoading, error } = useFetch(`/api/itempost/${id}/`);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   //TODO: implement loading
   if (isLoading) return <h1>Loading...</h1>;
   if (error)
     return <p>Failed to load the page. Please contact admin for assistance.</p>;
+
+  console.log(data);
 
   return (
     <Container className="my-3 bg-white p-3">
@@ -41,9 +45,17 @@ export default function ItemPostDetail() {
           <Button
             size="lg"
             style={{ width: "200px" }}
-            onClick={() => console.log("haha")}
+            onClick={() => {
+              if (user.username === data.created_by.username) {
+                // redirect to item post update page
+                navigate("update/");
+              } else {
+                // redirect to chatroom
+                //TODO: implement
+              }
+            }}
           >
-            Contact
+            {user.username === data.created_by.username ? "Edit" : "Contact"}
           </Button>
         </Col>
       </Row>

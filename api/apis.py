@@ -141,6 +141,6 @@ class ItemPostList(APIView):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ItemPostDetail(generics.RetrieveAPIView):
+class ItemPostDetail(generics.RetrieveUpdateAPIView):
     serializer_class = ItemPostSerializer
     queryset = ItemPost.objects.all()
