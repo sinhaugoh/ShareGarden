@@ -6,11 +6,12 @@ export default function SelectFieldBs({
   onChange,
   className,
   selectionObject,
+  defaultValue,
 }) {
   return (
     <Form.Group className={className}>
       <Form.Label>{label}</Form.Label>
-      <Form.Select name={name} onChange={onChange}>
+      <Form.Select name={name} onChange={onChange} defaultValue={defaultValue}>
         {Object.keys(selectionObject).map((key, index) => (
           <option value={selectionObject[key]} key={index}>
             {selectionObject[key]}

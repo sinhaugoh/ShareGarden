@@ -9,6 +9,7 @@ export default function LocationAutocompleteFieldBs({
   placeholder,
   name,
   apiKey,
+  defaultValue,
 }) {
   const { ref } = usePlacesWidget({
     apiKey: apiKey,
@@ -31,6 +32,7 @@ export default function LocationAutocompleteFieldBs({
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
         ref={ref}
+        defaultValue={defaultValue}
       />
       {error && <Form.Text className="invalid-feedback">{error}</Form.Text>}
     </Form.Group>

@@ -197,7 +197,7 @@ export default function CreateItemPostFormModal() {
                   name="images"
                   type="file"
                   multiple
-                  onChange={handleMultipleImagesUploadChange}
+                  onChange={handleSingleImageUploadChange}
                   accept="image/png, image/jpeg"
                 />
                 <Form.Text>

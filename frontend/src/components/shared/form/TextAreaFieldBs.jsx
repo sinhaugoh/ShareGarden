@@ -9,6 +9,7 @@ export default function TextAreaFieldBs({
   placeholder,
   onChange,
   ref,
+  defaultValue,
 }) {
   return (
     <Form.Group className={className}>
@@ -21,6 +22,7 @@ export default function TextAreaFieldBs({
         placeholder={placeholder}
         onChange={onChange}
         ref={ref}
+        defaultValue={defaultValue}
       />
       {error && <Form.Text className="invalid-feedback">{error}</Form.Text>}
     </Form.Group>

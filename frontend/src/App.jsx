@@ -8,6 +8,7 @@ import { CreateItemPostProvider } from "./contexts/CreateItemPostContext";
 import NavbarBs from "./components/shared/NavbarBs";
 import ItemPostDetail from "./pages/ItemPostDetail";
 import Profile from "./pages/Profile";
+import ItemPostUpdate from "./pages/ItemPostUpdate";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/" exact element={<Home />} />
             <Route path="/register/" element={<Register />} />
             <Route path="/profile/:username/" element={<Profile />} />
+            <Route path="/itempost/:id/update/" element={<ItemPostUpdate />} />
             <Route path="/itempost/:id/" element={<ItemPostDetail />} />
             <Route
               path="/chatroom/"
