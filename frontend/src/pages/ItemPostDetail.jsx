@@ -16,8 +16,6 @@ export default function ItemPostDetail() {
   if (error)
     return <p>Failed to load the page. Please contact admin for assistance.</p>;
 
-  console.log(data);
-
   return (
     <Container className="my-3 bg-white p-3">
       <Row className="mb-3">

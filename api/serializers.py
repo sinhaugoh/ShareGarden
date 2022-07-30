@@ -144,7 +144,7 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
         request_data_dict = dict(self.context.get('request').data)
         images = request_data_dict.get('images')
         # throw validation error if number of images more than 5
-        if len(images) > 5:
+        if images and len(images) > 5:
             raise serializers.ValidationError(
                 {'images': 'Upload count exceeded.'})
         return attrs
@@ -157,7 +157,7 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
             **validated_data, created_by=self.context['request'].user)
 
         # bulk create PostImage
-        images = self.context.get('request').data.pop('images')
+        images = self.context.get('request').data.pop('images', None)
         post_images = []
         if images is not None:
             for image in images:
