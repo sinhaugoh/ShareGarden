@@ -42,6 +42,7 @@ export default function ItemPostUpdate() {
       soil_type: data?.soil_type,
       light_requirement: data?.light_requirement,
       growing_tips: data?.growing_tips,
+      is_active: data?.is_active,
     });
   }, [data]);
 
@@ -86,7 +87,8 @@ export default function ItemPostUpdate() {
 
     if (response.status === 200) {
       console.log("post updated!!");
-      navigate(`/itempost/${id}/`);
+      // navigate(`/itempost/${id}/`, { replace: true });
+      navigate(-1);
     } else if (response.status === 400) {
       let data = await response.json();
       setFormErrors(data);
@@ -113,6 +115,13 @@ export default function ItemPostUpdate() {
     setFormInputs((inputs) => ({
       ...inputs,
       [event.target.name]: event.target.files,
+    }));
+  }
+
+  function handleCheckFieldChange(event) {
+    setFormInputs((inputs) => ({
+      ...inputs,
+      [event.target.name]: !inputs[event.target.name],
     }));
   }
 
@@ -362,6 +371,15 @@ export default function ItemPostUpdate() {
               </Accordion>
             </>
           )}
+        <Form.Group className="mb-3">
+          <Form.Check
+            type="checkbox"
+            label="Is active"
+            checked={formInputs.is_active}
+            name="is_active"
+            onChange={handleCheckFieldChange}
+          />
+        </Form.Group>
         <div className="d-flex justify-content-end">
           <Button
             variant="secondary"
@@ -375,7 +393,7 @@ export default function ItemPostUpdate() {
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Creating..." : "Create"}
+            {isSubmitting ? "Updating..." : "Update"}
           </Button>
         </div>
       </Form>

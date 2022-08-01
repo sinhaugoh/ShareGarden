@@ -74,7 +74,8 @@ class ItemPostSerializer(serializers.ModelSerializer):
             'characteristics',
             'soil_type',
             'light_requirement',
-            'cover_image'
+            'cover_image',
+            'is_active'
         ]
 
     def validate_location(self, value):
