@@ -44,7 +44,7 @@ export default function ItemPostDetail() {
             size="lg"
             style={{ width: "200px" }}
             onClick={() => {
-              if (user.username === data.created_by.username) {
+              if (user?.username === data.created_by.username) {
                 // redirect to item post update page
                 navigate("update/");
               } else {
@@ -53,7 +53,7 @@ export default function ItemPostDetail() {
               }
             }}
           >
-            {user.username === data.created_by.username ? "Edit" : "Contact"}
+            {user?.username === data.created_by.username ? "Edit" : "Contact"}
           </Button>
         </Col>
       </Row>

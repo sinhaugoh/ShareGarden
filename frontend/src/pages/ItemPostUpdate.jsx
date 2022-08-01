@@ -1,14 +1,6 @@
-import {
-  Container,
-  Form,
-  Row,
-  Col,
-  Accordion,
-  Image,
-  Button,
-} from "react-bootstrap";
+import { Container, Form, Row, Col, Accordion, Button } from "react-bootstrap";
 import useFetch from "../hooks/useFetch";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   Category,
@@ -19,6 +11,7 @@ import {
   MAXIMUM_POST_IMAGE_COUNT,
   GOOGLE_MAP_API_KEY,
 } from "../constants";
+import { getCookie } from "../utils";
 import SelectFieldBs from "../components/shared/form/SelectFieldBs";
 import TextFieldBs from "../components/shared/form/TextFieldBs";
 import TextAreaFieldBs from "../components/shared/form/TextAreaFieldBs";
@@ -31,6 +24,7 @@ export default function ItemPostUpdate() {
   const [formErrors, setFormErrors] = useState({});
   // set form default inputs if initial data has been loaded
   const [formInputs, setFormInputs] = useState({});
+  const navigate = useNavigate();
   console.log("formInputs", formInputs);
 
   useEffect(() => {
@@ -50,6 +44,56 @@ export default function ItemPostUpdate() {
       growing_tips: data?.growing_tips,
     });
   }, [data]);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData();
+
+    for (const key in formInputs) {
+      // loop through each image in images property
+      if (key === "images") {
+        for (const image of formInputs[key]) {
+          formData.append(key, image, image.name);
+        }
+        continue;
+      }
+
+      if (key === "cover_image") {
+        console.log("heloo");
+        if (formInputs[key].length > 0) {
+          formData.append(key, formInputs[key]?.[0], formInputs[key]?.[0].name);
+        }
+        continue;
+      }
+
+      if (formInputs[key] !== null && formInputs[key] !== undefined) {
+        formData.append(key, formInputs[key]);
+      }
+    }
+    // Display the key/value pairs
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
+
+    setIsSubmitting(true);
+    let response = await fetch(`/api/itempost/${id}/`, {
+      method: "PATCH",
+      body: formData,
+      headers: {
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+    });
+
+    if (response.status === 200) {
+      console.log("post updated!!");
+      navigate(`/itempost/${id}/`);
+    } else if (response.status === 400) {
+      let data = await response.json();
+      setFormErrors(data);
+      console.log("error 400", data);
+    }
+    setIsSubmitting(false);
+  }
 
   function handleChange(event) {
     setFormInputs((inputs) => ({
@@ -136,7 +180,7 @@ export default function ItemPostUpdate() {
             )}
       */}
             <Form.Group>
-              <Form.Label>Cover image</Form.Label>
+              <Form.Label>Reupload cover image</Form.Label>
               <Form.Control
                 className={formErrors.cover_image && "is-invalid"}
                 name="cover_image"
@@ -153,7 +197,7 @@ export default function ItemPostUpdate() {
           </Col>
           <Col sm={6} className="mb-3">
             <Form.Group>
-              <Form.Label>Image(s)</Form.Label>
+              <Form.Label>Reupload image(s)</Form.Label>
               <Form.Control
                 className={formErrors.images && "is-invalid"}
                 name="images"
@@ -276,7 +320,7 @@ export default function ItemPostUpdate() {
                   />
                 </Col>
               </Row>
-              <Accordion>
+              <Accordion className="mb-3">
                 <Accordion.Item eventKey="0">
                   <Accordion.Header>
                     Additional seed/plant information
@@ -318,6 +362,22 @@ export default function ItemPostUpdate() {
               </Accordion>
             </>
           )}
+        <div className="d-flex justify-content-end">
+          <Button
+            variant="secondary"
+            className="me-2"
+            onClick={() => navigate(-1)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Creating..." : "Create"}
+          </Button>
+        </div>
       </Form>
     </Container>
   );
