@@ -49,7 +49,7 @@ export default function UserInfo() {
         <h5 className="mt-4">About</h5>
         <p>
           {data.username === user.username
-            ? user.about
+            ? user.about ?? "No information provided."
             : data.about ?? "No information provided."}
         </p>
       </Col>
