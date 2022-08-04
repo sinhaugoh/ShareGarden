@@ -1,4 +1,5 @@
 import { Container, Form, Row, Col, Accordion, Button } from "react-bootstrap";
+import { useAuth } from "../contexts/AuthContext";
 import useFetch from "../hooks/useFetch";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -25,7 +26,9 @@ export default function ItemPostUpdate() {
   // set form default inputs if initial data has been loaded
   const [formInputs, setFormInputs] = useState({});
   const navigate = useNavigate();
+  const { user } = useAuth();
   console.log("formInputs", formInputs);
+  console.log("data", data);
 
   useEffect(() => {
     setFormInputs({
@@ -131,6 +134,11 @@ export default function ItemPostUpdate() {
     return <p>Failed to load the page. Please contact admin for assistance.</p>;
   }
 
+  // check if the user is authorised to edit the item post
+  if (data.created_by.username !== user.username) {
+    //TODO: implement unauthorised page
+    return <p>You are not authorised to access this page.</p>;
+  }
   // // set default form input if initial data is retrieved
   // setFormInputs({
   //   images: data.itempostimage_set,
