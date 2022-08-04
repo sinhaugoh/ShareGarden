@@ -12,6 +12,25 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ['username', 'profile_image', 'about', 'address']
 
+    def validate_username(self, value):
+        # make sure the username cannot be modified once user is created
+        if self.instance and value != self.instance.username:
+            raise serializers.ValidationError("Username can only be set once.")
+
+    def validate_address(self, value):
+        if value == '':
+            return value
+
+        gmaps = googlemaps.Client(key=GOOGLE_API_KEY)
+        # raise validation error if the google map api cannot geocode the address
+        result = gmaps.geocode(value)
+
+        if not result:
+            raise serializers.ValidationError(
+                'Please provide a valid address.')
+
+        return value
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(

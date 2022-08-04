@@ -5,7 +5,7 @@ from .models import User, ItemPost, ItemPostImage
 # Register your models here.
 # add new section
 UserAdmin.fieldsets += ('Other information',
-                        {'fields': ('profile_image', 'location', 'about')}),
+                        {'fields': ('profile_image', 'address', 'about')}),
 
 admin.site.register(User, UserAdmin)
 admin.site.register(ItemPost)
