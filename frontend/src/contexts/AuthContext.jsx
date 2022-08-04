@@ -34,6 +34,21 @@ export function AuthProvider({ children }) {
     }
   }, [isFirstLoad]);
 
+  async function fetchAuthUser() {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/authuser/");
+      const authUser = await response.json();
+      setUser(authUser.user);
+    } catch (e) {
+      console.log("AuthContext:", e);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+      setIsFirstLoad(false);
+    }
+  }
+
   async function register(formInput) {
     //send request to register user
     const response = await fetch("/api/register/", {
@@ -66,7 +81,7 @@ export function AuthProvider({ children }) {
   console.log(user);
 
   return (
-    <AuthContext.Provider value={{ user, register, logout }}>
+    <AuthContext.Provider value={{ user, register, logout, fetchAuthUser }}>
       {/*TODO: implement loading page*/}
       {isLoading ? <h1>is loading...</h1> : children}
     </AuthContext.Provider>

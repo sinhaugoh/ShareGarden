@@ -17,7 +17,7 @@ import { GOOGLE_MAP_API_KEY } from "../constants";
 import { getCookie } from "../utils";
 
 export default function ProfileUpdate() {
-  const { user } = useAuth();
+  const { user, fetchAuthUser } = useAuth();
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState({});
   const [formInputs, setFormInputs] = useState({});
@@ -56,6 +56,9 @@ export default function ProfileUpdate() {
 
     if (response.status === 200) {
       console.log("user profile updated!");
+      // refetch auth user
+      await fetchAuthUser();
+      navigate(-1);
     } else if (response.status === 400) {
       const data = await response.json();
       setFormErrors(data);
