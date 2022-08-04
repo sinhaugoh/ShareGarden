@@ -10,6 +10,7 @@ export default function LocationAutocompleteFieldBs({
   name,
   apiKey,
   defaultValue,
+  hintText,
 }) {
   const { ref } = usePlacesWidget({
     apiKey: apiKey,
@@ -35,6 +36,7 @@ export default function LocationAutocompleteFieldBs({
         defaultValue={defaultValue}
       />
       {error && <Form.Text className="invalid-feedback">{error}</Form.Text>}
+      <Form.Text className="text-muted">{hintText}</Form.Text>
     </Form.Group>
   );
 }

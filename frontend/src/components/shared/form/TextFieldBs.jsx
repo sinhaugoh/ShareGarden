@@ -9,6 +9,7 @@ export default function TextFieldBs({
   name,
   innerRef,
   defaultValue,
+  disabled,
 }) {
   return (
     <Form.Group className={className}>
@@ -21,6 +22,7 @@ export default function TextFieldBs({
         onChange={onChange}
         ref={innerRef}
         defaultValue={defaultValue}
+        disabled={disabled}
       />
       {error && <Form.Text className="invalid-feedback">{error}</Form.Text>}
     </Form.Group>

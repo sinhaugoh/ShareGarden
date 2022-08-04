@@ -9,6 +9,7 @@ import NavbarBs from "./components/shared/NavbarBs";
 import ItemPostDetail from "./pages/ItemPostDetail";
 import Profile from "./pages/Profile";
 import ItemPostUpdate from "./pages/ItemPostUpdate";
+import ProfileUpdate from "./pages/ProfileUpdate";
 
 function App() {
   return (
@@ -19,8 +20,23 @@ function App() {
           <Routes>
             <Route path="/" exact element={<Home />} />
             <Route path="/register/" element={<Register />} />
+            <Route
+              path="/account/update/"
+              element={
+                <RequireAuth redirectedPath="/account/update/">
+                  <ProfileUpdate />
+                </RequireAuth>
+              }
+            />
             <Route path="/profile/:username/" element={<Profile />} />
-            <Route path="/itempost/:id/update/" element={<ItemPostUpdate />} />
+            <Route
+              path="/itempost/:id/update/"
+              element={
+                <RequireAuth>
+                  <ItemPostUpdate />
+                </RequireAuth>
+              }
+            />
             <Route path="/itempost/:id/" element={<ItemPostDetail />} />
             <Route
               path="/chatroom/"

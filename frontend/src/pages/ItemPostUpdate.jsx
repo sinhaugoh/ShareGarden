@@ -23,7 +23,6 @@ export default function ItemPostUpdate() {
   const { data, isLoading, error } = useFetch(`/api/itempost/${id}/`);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-  // set form default inputs if initial data has been loaded
   const [formInputs, setFormInputs] = useState({});
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -63,7 +62,6 @@ export default function ItemPostUpdate() {
       }
 
       if (key === "cover_image") {
-        console.log("heloo");
         if (formInputs[key].length > 0) {
           formData.append(key, formInputs[key]?.[0], formInputs[key]?.[0].name);
         }
