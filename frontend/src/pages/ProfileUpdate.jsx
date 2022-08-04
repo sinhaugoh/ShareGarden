@@ -97,14 +97,17 @@ export default function ProfileUpdate() {
             <Card.Body>
               <Card.Title className="mb-3">Update profile</Card.Title>
               <Form className="d-flex flex-column">
-                <Image
-                  src={user.profile_image ?? "/static/default_profile_pic.png"}
-                  width={200}
-                  height={200}
-                  roundedCircle
-                  thumbnail
-                  className="align-self-center mb-3"
-                />
+                {/*
+      <Image
+      src={user.profile_image ?? "/static/default_profile_pic.png"}
+      width={200}
+      height={200}
+      roundedCircle
+      thumbnail
+      className="align-self-center mb-3"
+      style={{ objectFit: "cover" }}
+      />
+    */}
                 <Form.Group className="mb-3">
                   <Form.Label>Reupload profile image</Form.Label>
                   <Form.Control

@@ -45,6 +45,11 @@ export default function NavbarBs() {
                   >
                     My profile
                   </NavDropdown.Item>
+                  <NavDropdown.Item
+                    onClick={() => navigate("/account/update/")}
+                  >
+                    Edit profile
+                  </NavDropdown.Item>
                   <NavDropdown.Item>My listing</NavDropdown.Item>
                   <NavDropdown.Item>My deals</NavDropdown.Item>
                   <NavDropdown.Item as="button" onClick={logout}>
