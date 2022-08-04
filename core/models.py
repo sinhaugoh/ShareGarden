@@ -22,7 +22,7 @@ class User(AbstractUser):
     profile_image = models.ImageField(null=True, blank=True,
                                       upload_to=get_profile_image_path, storage=OverwriteFileStorage())
     about = models.CharField(max_length=500, null=True, blank=True)
-    location = models.CharField(max_length=500, null=True, blank=True)
+    address = models.CharField(max_length=500, null=True, blank=True)
 
 
 class ItemPost(models.Model):
@@ -93,3 +93,21 @@ class ItemPostImage(models.Model):
     item_post = models.ForeignKey(ItemPost, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=get_item_image_path)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+
+class Transaction(models.Model):
+    # class Status(models.TextChoices):
+    #     PENDING = 'Pending'
+    #     ACCEPTED = 'Accepted'
+    #     COMPLETED = 'Completed'
+
+    request_amount = models.PositiveSmallIntegerField()
+    # status = models.CharField(
+    #     max_length=10, choices=Status.choices, default=Status.PENDING)
+    is_completed = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True)
+    requester = models.ForeignKey(
+        User, on_delete=models.DO_NOTHING, related_name='requester')
+    requestee = models.ForeignKey(
+        User, on_delete=models.DO_NOTHING, related_name='requestee')
+    item_post = models.ForeignKey(ItemPost, on_delete=models.CASCADE)

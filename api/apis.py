@@ -88,7 +88,7 @@ class ItemPostList(APIView):
 
         serializer = ItemPostListSerializer(instance=item_posts, many=True)
 
-        if not request.user.is_authenticated or not request.user.location or not item_posts:
+        if not request.user.is_authenticated or not request.user.address or not item_posts:
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             # insert distances calculation if the user is authenticated and has location
@@ -102,7 +102,7 @@ class ItemPostList(APIView):
 
             # calculate distances
             result = gmaps.distance_matrix(
-                origins=request.user.location, destinations=item_posts_pick_up_location, units="metric")
+                origins=request.user.address, destinations=item_posts_pick_up_location, units="metric")
 
             distances = [ele['distance']['text']
                          for ele in result['rows'][0]['elements']]

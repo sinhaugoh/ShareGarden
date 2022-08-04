@@ -10,7 +10,7 @@ from .constants import GOOGLE_API_KEY
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['username', 'profile_image', 'about']
+        fields = ['username', 'profile_image', 'about', 'address']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
