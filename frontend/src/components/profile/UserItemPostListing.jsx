@@ -1,7 +1,7 @@
 import { Row, Accordion, Col } from "react-bootstrap";
 import useFetch from "../../hooks/useFetch";
 import { useParams } from "react-router-dom";
-import HomeItemCard from "../home/HomeItemCard";
+import ItemCard from "../shared/ItemCard";
 
 export default function UserItemPostListing() {
   const { username } = useParams();
@@ -38,7 +38,7 @@ export default function UserItemPostListing() {
 
                   return (
                     <Col className="mb-3" key={itemPost.id}>
-                      <HomeItemCard {...itemPost} />
+                      <ItemCard {...itemPost} />
                     </Col>
                   );
                 })}
@@ -57,7 +57,7 @@ export default function UserItemPostListing() {
 
                   return (
                     <Col className="mb-3" key={itemPost.id}>
-                      <HomeItemCard {...itemPost} />
+                      <ItemCard {...itemPost} />
                     </Col>
                   );
                 })}

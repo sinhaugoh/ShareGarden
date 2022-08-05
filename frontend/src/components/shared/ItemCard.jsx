@@ -2,7 +2,7 @@ import { Card } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function HomeItemCard({
+export default function ItemCard({
   id,
   category,
   cover_image,
@@ -56,7 +56,7 @@ export default function HomeItemCard({
   );
 }
 
-HomeItemCard.propTypes = {
+ItemCard.propTypes = {
   id: PropTypes.number,
   category: PropTypes.string,
   cover_image: PropTypes.string,

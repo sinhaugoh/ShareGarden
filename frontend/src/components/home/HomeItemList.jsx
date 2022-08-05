@@ -1,4 +1,4 @@
-import HomeItemCard from "./HomeItemCard";
+import ItemCard from "../shared/ItemCard";
 import { Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -42,7 +42,7 @@ export default function HomeItemList() {
       {data?.map((postItem) => {
         return (
           <Col className="mb-3" key={postItem.id}>
-            <HomeItemCard {...postItem} />
+            <ItemCard {...postItem} />
           </Col>
         );
       })}
