@@ -9,6 +9,7 @@ export default function ItemCard({
   description,
   title,
   distance,
+  quantity,
 }) {
   const navigate = useNavigate();
   return (
@@ -37,20 +38,23 @@ export default function ItemCard({
             ? "No description provided."
             : description}
         </Card.Text>
-        {distance ? (
-          <Card.Text className="text-muted mt-auto">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              fill="currentColor"
-              viewBox="0 0 18 18"
-            >
-              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path>
-            </svg>{" "}
-            {distance} away
-          </Card.Text>
-        ) : null}
+        <div className="d-flex justify-content-between">
+          {distance ? (
+            <Card.Text className="text-muted mt-auto">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                fill="currentColor"
+                viewBox="0 0 18 18"
+              >
+                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"></path>
+              </svg>{" "}
+              {distance} away
+            </Card.Text>
+          ) : null}
+          <Card.Text className="text-muted">Available: {quantity}</Card.Text>
+        </div>
       </Card.Body>
     </Card>
   );
