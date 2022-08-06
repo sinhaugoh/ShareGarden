@@ -164,6 +164,10 @@ class ItemPostList(APIView):
             return Response(payload, status=status.HTTP_200_OK)
 
     def post(self, request):
+        # make sure only authenticated user can create item post
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         serializer = CreateItemPostSerializer(
             data=request.data, context={'request': request})
 
@@ -175,5 +179,6 @@ class ItemPostList(APIView):
 
 
 class ItemPostDetail(generics.RetrieveUpdateAPIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = ItemPostSerializer
     queryset = ItemPost.objects.all()
