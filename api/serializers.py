@@ -86,8 +86,6 @@ class ItemPostSerializer(serializers.ModelSerializer):
             'growing_tips',
             'location',
             'created_by',
-            'date_created',
-            'date_modified',
             'itempostimage_set',
             'characteristics',
             'soil_type',
