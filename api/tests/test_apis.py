@@ -341,7 +341,7 @@ class ProfileUpdateTest(APITestCase):
 
 
 @override_settings(MEDIA_ROOT=MEDIA_ROOT)
-class ItemPostListGetTest(APITestCase):
+class ItemPostListGETTest(APITestCase):
     def setUp(self):
         super().setUp()
         self.user = UserFactory.create()
@@ -422,7 +422,7 @@ class ItemPostListGetTest(APITestCase):
 
 
 @override_settings(MEDIA_ROOT=MEDIA_ROOT)
-class ItemPostListPostTest(APITestCase):
+class ItemPostListPOSTTest(APITestCase):
     def setUp(self):
         super().setUp()
         self.user = UserFactory.create()
@@ -549,11 +549,11 @@ class ItemPostListPostTest(APITestCase):
 
 
 @override_settings(MEDIA_ROOT=MEDIA_ROOT)
-class ItemPostDetailGetTest(APITestCase):
+class ItemPostDetailGETTest(APITestCase):
     def setUp(self):
         super().setUp()
         self.user = UserFactory.create()
-        self.item_post_1 = ItemPostFactory.create()
+        self.item_post_1 = ItemPostFactory.create(created_by=self.user)
         self.rel_url = '/api/itempost/{}/'.format(self.item_post_1.id)
         self.url = reverse('item-post-detail',
                            kwargs={'pk': self.item_post_1.id})
@@ -588,3 +588,55 @@ class ItemPostDetailGetTest(APITestCase):
         response = self.client.get('/api/itempost/999/')
 
         self.assertEqual(response.status_code, 404)
+
+    def test_returnCorrectResultIfSuccessful(self):
+        response = self.client.get(self.url)
+        data = response.json()
+
+        self.assertEqual(data, {
+            'title': self.item_post_1.title,
+            'description': self.item_post_1.description,
+            'quantity': self.item_post_1.quantity,
+            'pick_up_information': self.item_post_1.pick_up_information,
+            'category': self.item_post_1.category,
+            'item_type': self.item_post_1.item_type,
+            'days_to_harvest': self.item_post_1.days_to_harvest,
+            'water_requirement': self.item_post_1.water_requirement,
+            'growing_tips': self.item_post_1.growing_tips,
+            'location': self.item_post_1.location,
+            'created_by': {
+                'username': self.item_post_1.created_by.username,
+                'profile_image': TEST_SERVER_DOMAIN + self.item_post_1.created_by.profile_image.url,
+                'about': self.item_post_1.created_by.about,
+                'address': self.item_post_1.created_by.address
+            },
+            'itempostimage_set': [],
+            'characteristics': self.item_post_1.characteristics,
+            'soil_type': self.item_post_1.soil_type,
+            'light_requirement': self.item_post_1.light_requirement,
+            'cover_image': TEST_SERVER_DOMAIN + self.item_post_1.cover_image.url,
+            'is_active': self.item_post_1.is_active
+        })
+
+
+@override_settings(MEDIA_ROOT=MEDIA_ROOT)
+class ItemPostDetailPATCHTest(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.user = UserFactory.create()
+        self.item_post_1 = ItemPostFactory.create(created_by=self.user)
+        self.rel_url = '/api/itempost/{}/'.format(self.item_post_1.id)
+        self.url = reverse('item-post-detail',
+                           kwargs={'pk': self.item_post_1.id})
+
+    def tearDown(self):
+        super().tearDown()
+        User.objects.all().delete()
+        ItemPost.objects.all().delete()
+        UserFactory.reset_sequence(0)
+        ItemPostFactory.reset_sequence(0)
+
+        # delete temp folder
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+
+    # TODO: implement test for this
