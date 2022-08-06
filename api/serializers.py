@@ -43,7 +43,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         write_only_fields = ['password', 'password2']
 
     def validate(self, attrs):
-        print('validate----------------------')
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError(
                 {"password": "Password fields not match."})

@@ -12,6 +12,8 @@ import googlemaps
 
 
 class AuthUser(APIView):
+    '''Return current logged in user. return None if not authenticated'''
+
     def get(self, request):
         payload = {}
         payload['user'] = None
@@ -24,39 +26,52 @@ class AuthUser(APIView):
 
 
 class Logout(APIView):
+    '''Log the current logged in user out of the session'''
+
     def get(self, request):
         if not request.user.is_authenticated:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class Register(APIView):
+    '''Register user with username, password and password2'''
+
     def post(self, request):
+        # reject user from registering if already authenticated
+        if request.user.is_authenticated:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
         serializer = RegisterSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.save()
-
-            # authenticate and log the user in
+            # authenticate and log the new user in
             user = authenticate(
                 username=serializer.validated_data['username'], password=serializer.validated_data['password'])
             login(request, user)
 
+            # return the data of the user to be stored in the frontend
             userSerializer = UserSerializer(instance=user)
 
             return Response({'user': userSerializer.data}, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserApi(generics.RetrieveAPIView):
+    '''Retrieve data about a specific user'''
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = "username"
 
 
 class ProfileUpdate(APIView):
+    '''Update profile of the logged in user'''
+
     permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request):
@@ -71,6 +86,11 @@ class ProfileUpdate(APIView):
 
 
 class ItemPostList(APIView):
+    '''
+    Get - Retrieve item post list
+    Post - Create an item post
+    '''
+
     def get(self, request):
         q_objects_for_filter = Q()
         q_objects_for_exclude = Q()
@@ -88,7 +108,6 @@ class ItemPostList(APIView):
 
             # include optional filters
             if user_filter:
-                print('hoh')
                 # this filter is used in profile page
                 try:
                     user = User.objects.get(username=user_filter)
