@@ -248,3 +248,159 @@ class UserApiTest(APITestCase):
             'about': self.user.about,
             'address': self.user.address
         })
+
+
+class ProfileUpdateTest(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.user = UserFactory.create()
+        self.rel_url = '/api/account/update/'
+        self.url = reverse('account-update')
+        self.valid_data = {
+            'about': 'Test about',
+            'address': 'Yew tee point'
+        }
+
+        # log in
+        self.client.login(username=self.user.username, password=USER_PASSWORD)
+
+    def tearDown(self):
+        super().tearDown()
+        User.objects.all().delete()
+        UserFactory.reset_sequence(0)
+
+        # delete temp folder
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+
+    def test_urlByNameIsWorking(self):
+        response = self.client.patch(self.url, self.valid_data)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_returnCorrectStatusCodeIfNotAuthenticated(self):
+        # log out
+        self.client.logout()
+
+        response = self.client.patch(self.rel_url, self.valid_data)
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_returnCorrectStatusCodeIfSuccessful(self):
+        response = self.client.patch(self.rel_url, self.valid_data)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_userInfoShouldBeUpdatedIfSuccessful(self):
+        response = self.client.patch(self.rel_url, self.valid_data)
+        data = response.json()
+
+        updated_user = User.objects.get(id=self.user.id)
+
+        self.assertEqual(updated_user.about, self.valid_data['about'])
+        self.assertEqual(updated_user.address, self.valid_data['address'])
+
+    def test_returnCorrectStatusCodeIfAddressIsInvalid(self):
+        invalid_data = {**self.valid_data, 'address': 'a'}
+        response = self.client.patch(self.rel_url, invalid_data)
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_returnCorrectResultIfAddressIsInvalid(self):
+        invalid_data = {**self.valid_data, 'address': 'a'}
+        response = self.client.patch(self.rel_url, invalid_data)
+        data = response.json()
+
+        self.assertEqual(data['address'][0], 'Please provide a valid address.')
+
+    def test_returnCorrectStatusCodeIfTheUserTryToChangeUsername(self):
+        invalid_data = {**self.valid_data, 'username': 'TEST'}
+        response = self.client.patch(self.rel_url, invalid_data)
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_returnCorrectResultIfTheUserTryToChangeUsername(self):
+        invalid_data = {**self.valid_data, 'username': 'TEST'}
+        response = self.client.patch(self.rel_url, invalid_data)
+        data = response.json()
+
+        self.assertEqual(data['username'][0], 'Username can only be set once.')
+
+
+class ItemPostListTest(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.user = UserFactory.create()
+        self.user_with_address = UserFactory.create(address='Pasir ris mrt')
+        self.item_post_1 = ItemPostFactory.create()
+        self.rel_url = '/api/itemposts/'
+        self.url = reverse('item-post-list')
+
+    def tearDown(self):
+        super().tearDown()
+        User.objects.all().delete()
+        ItemPost.objects.all().delete()
+        UserFactory.reset_sequence(0)
+        ItemPostFactory.reset_sequence(0)
+
+        # delete temp folder
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+
+    def test_urlIsWorking(self):
+        response = self.client.get(self.rel_url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_urlByNameIsWorking(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_returnCorrectNumberOfItemPostsIfSuccessful(self):
+        response = self.client.get(self.url)
+        data = response.json()
+
+        self.assertEqual(len(data), 1)
+
+    def test_returnCorrectResultIfSuccessful(self):
+        response = self.client.get(self.url)
+        data = response.json()
+
+        self.assertEqual(data, [{
+            'id': self.item_post_1.id,
+            'title': self.item_post_1.title,
+            'description': self.item_post_1.description,
+            'location': self.item_post_1.location,
+            'category': self.item_post_1.category,
+            'cover_image': self.item_post_1.cover_image.url,
+            'is_active': self.item_post_1.is_active,
+            'quantity': self.item_post_1.quantity,
+
+        }])
+
+    def test_returnCorrectResultIfAuthenticatedAndSuccessful(self):
+        # login
+        self.client.login(username=self.user,
+                          password=USER_PASSWORD)
+        response = self.client.get(self.url)
+        data = response.json()
+
+        self.assertEqual(data, [{
+            'id': self.item_post_1.id,
+            'title': self.item_post_1.title,
+            'description': self.item_post_1.description,
+            'location': self.item_post_1.location,
+            'category': self.item_post_1.category,
+            'cover_image': self.item_post_1.cover_image.url,
+            'is_active': self.item_post_1.is_active,
+            'quantity': self.item_post_1.quantity,
+
+        }])
+
+    def test_shouldIncludeDistancePropertyIfAuthenticatedAndUserHasAddress(self):
+        # login
+        self.client.login(username=self.user_with_address,
+                          password=USER_PASSWORD)
+        response = self.client.get(self.rel_url)
+        data = response.json()
+
+        self.assertTrue('distance' in data[0].keys())
