@@ -1,22 +1,13 @@
-import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useEffect } from "react";
 
 export default function Chatroom() {
-  const { logout } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    console.log("haha");
+    const chatSocket = new WebSocket(
+      "ws://127.0.0.1:8000" + "/ws/" + "HARDCODE/"
+    );
+    console.log("chat", chatSocket);
+  }, []);
 
-  async function handleLogout() {
-    setIsLoading(true);
-    await logout();
-    setIsLoading(false);
-  }
-
-  return (
-    <>
-      <h1>Chatroom</h1>
-      <button onClick={handleLogout}>
-        {isLoading ? "logging out" : "logout"}
-      </button>
-    </>
-  );
+  return <h1>Chatroom</h1>;
 }

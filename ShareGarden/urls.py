@@ -29,7 +29,7 @@ urlpatterns = [
     # re_path('(^(?!(api|admin|media|static)).*$)',
     #         TemplateView.as_view(template_name="index.html"))
     path('', include('core.urls')),
-    path('api/', include('api.urls'))
+    path('api/', include('api.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

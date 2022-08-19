@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
+import ChatList from "./pages/ChatList";
 import Chatroom from "./pages/Chatroom";
 import Register from "./pages/Register";
 import RequireAuth from "./components/shared/RequireAuth";
@@ -39,9 +40,17 @@ function App() {
             />
             <Route path="/itempost/:id/" element={<ItemPostDetail />} />
             <Route
-              path="/chatroom/"
+              path="/chatlist/"
               element={
-                <RequireAuth redirectedPath="/chatroom/">
+                <RequireAuth redirectedPath="/chatlist/">
+                  <ChatList />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/chatroom/:room_name/"
+              element={
+                <RequireAuth redirectedPath="/chatroom/:room_name/">
                   <Chatroom />
                 </RequireAuth>
               }

@@ -36,7 +36,7 @@ export default function NavbarBs() {
           <Nav className="ms-auto">
             {user ? (
               <>
-                <Nav.Link to="/chatroom/" as={NavLink}>
+                <Nav.Link to="/chatlist/" as={NavLink}>
                   Chat
                 </Nav.Link>
                 <NavDropdown title={user?.username} align="end">

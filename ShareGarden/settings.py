@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'core.apps.CoreConfig',
-    'api.apps.ApiConfig'
+    'api.apps.ApiConfig',
+    'channels',
+    'chat.apps.ChatConfig'
 ]
 
 AUTH_USER_MODEL = 'core.User'
@@ -80,6 +82,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ShareGarden.wsgi.application'
+ASGI_APPLICATION = 'ShareGarden.routing.application'
 
 
 # Database
@@ -145,3 +148,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'home'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
+}
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer"
+#     }
+# }
