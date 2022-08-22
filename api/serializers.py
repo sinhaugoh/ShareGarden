@@ -75,6 +75,7 @@ class ItemPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPost
         fields = [
+            'id',
             'title',
             'description',
             'quantity',

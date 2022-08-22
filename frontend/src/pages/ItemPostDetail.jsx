@@ -1,6 +1,6 @@
-import { useEffect } from "react";
 import { Container, Row, Col, Image, Button, Carousel } from "react-bootstrap";
 import useFetch from "../hooks/useFetch";
+import { createRoomName } from "../utils";
 import { useParams, useNavigate } from "react-router-dom";
 import { DEFAULT_PROFILE_PIC_PATH, Category, ItemType } from "../constants";
 import { useAuth } from "../contexts/AuthContext";
@@ -10,6 +10,7 @@ export default function ItemPostDetail() {
   const { data, isLoading, error } = useFetch(`/api/itempost/${id}/`);
   const { user } = useAuth();
   const navigate = useNavigate();
+  console.log("data", data);
 
   //TODO: implement loading
   if (isLoading) return <h1>Loading...</h1>;
@@ -49,7 +50,13 @@ export default function ItemPostDetail() {
                 navigate("update/");
               } else {
                 // redirect to chatroom
-                //TODO: implement
+                navigate(
+                  `/chatroom/${createRoomName(
+                    user.username,
+                    data.created_by.username,
+                    data.id
+                  )}/`
+                );
               }
             }}
           >

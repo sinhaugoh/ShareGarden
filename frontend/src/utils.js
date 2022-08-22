@@ -13,3 +13,11 @@ export function getCookie(name) {
   }
   return cookieValue;
 }
+
+export function createRoomName(requesterName, ItemPostAuthorName, ItemPostId) {
+  /**
+   *Create room name based on requesterName, itemPostAuthorName, itemPostId.
+   *Format: <requesterName>__<itemPostAuthorName>__<itemPostId>
+   */
+  return `${requesterName}__${ItemPostAuthorName}__${ItemPostId}`;
+}

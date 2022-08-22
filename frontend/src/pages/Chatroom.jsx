@@ -61,6 +61,7 @@ export default function Chatroom() {
   //   };
   // }, [room_name]);
 
+  //TODO: implement 404 page
   if (hasError)
     return (
       <div>
