@@ -16,5 +16,6 @@ class Chatroom(models.Model):
 class Message(models.Model):
     content = models.CharField(max_length=512)
     timestamp = models.DateTimeField(auto_now_add=True)
-    chatroom = models.ForeignKey(Chatroom, on_delete=models.CASCADE)
+    chatroom = models.ForeignKey(
+        Chatroom, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING)

@@ -1,31 +1,37 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import useWebSocket from "react-use-websocket";
 
 export default function Chatroom() {
+  const { user } = useAuth();
   const { room_name } = useParams();
-  const [welcome, setWelcome] = useState("");
   const [messages, setMessages] = useState([]);
+  const [hasError, setHasError] = useState(false);
   const { readyState, sendJsonMessage } = useWebSocket(
     `ws://127.0.0.1:8000/ws/${room_name}/`,
     {
       onOpen: () => {
         console.log("Connected!");
+        setHasError(false);
       },
-      onClose: () => {
+      onClose: (e) => {
+        console.log(e);
         console.log("Disconnected!");
+      },
+      onError: (e) => {
+        console.log("eeror", e);
+        setHasError(true);
       },
       onMessage: (e) => {
         const data = JSON.parse(e.data);
 
         switch (data.type) {
-          case "welcome_message":
-            console.log(data.message);
-            setWelcome(data.message);
-            break;
           case "chat_message_echo":
-            console.log("hoejoe");
             setMessages((prev) => [...prev, data.message]);
+            break;
+          case "message_history":
+            setMessages(data.messages);
             break;
           default:
             break;
@@ -55,15 +61,22 @@ export default function Chatroom() {
   //   };
   // }, [room_name]);
 
+  if (hasError)
+    return (
+      <div>
+        <h1>Invalid URL</h1>
+      </div>
+    );
+
   return (
     <div>
       <h1>Chatroom</h1>
-      <p>{welcome}</p>
       <button
         onClick={() =>
           sendJsonMessage({
             type: "chat_message",
             message: "hi there",
+            username: user.username,
           })
         }
       >

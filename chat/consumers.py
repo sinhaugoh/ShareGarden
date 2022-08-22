@@ -1,5 +1,10 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from asgiref.sync import async_to_sync
+from asgiref.sync import sync_to_async
+from django.core.exceptions import ObjectDoesNotExist
+from .models import Chatroom, Message
+from .utils import split_room_name
+from core.models import User, ItemPost
+from .serializers import MessageSerializer
 
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
@@ -7,27 +12,37 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         super().__init__(args, kwargs)
         self.room_name = None
         self.group_name = None
+        self.user = None
+        self.chatroom = None
 
     async def connect(self):
-        #TODO: authentication
-        print("Connected!")
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.group_name = 'chat_{}'.format(self.room_name)
+        self.chatroom = await self.get_or_create_chatroom(self.room_name)
 
-        print('room name', self.room_name)
+        if self.chatroom is None:
+            # return 404 if chatroom cannot be retrieved or created (invalid link)
+            print('hello')
+            await self.close(code=404)
+            return
 
         await self.channel_layer.group_add(
             self.group_name,
             self.channel_name
         )
-        await self.accept()
 
-        await self.send_json(
-            {
-                "type": "welcome_message",
-                "message": "Hey there! You've successfully connected!",
-            }
-        )
+        # fetch message history from database
+        messages = await self.get_message_history_in_dict(self.chatroom)
+        print(messages)
+
+        await self.accept()
+        print("Connected!")
+
+        # send to websocket
+        await self.send_json({
+            'type': 'message_history',
+            'messages': messages
+        })
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(
@@ -38,17 +53,57 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def receive_json(self, content, **kwargs):
         message_type = content['type']
         if message_type == 'chat_message':
+            # save message into the database
+            message = await self.save_message_to_database(content['message'], content['username'], self.chatroom)
+            print('username:', message.sender.username)
+            print('message:', message.content)
+
+            # broadcast the message to everyone connected to the
             await self.channel_layer.group_send(
                 self.group_name,
                 {
                     'type': 'chat_message_echo',
-                    'message': content['message']
+                    'message': MessageSerializer(message).data
                 }
             )
 
-        print(content)
         return super().receive_json(content, **kwargs)
 
     async def chat_message_echo(self, event):
         print('event', event)
         await self.send_json(event)
+
+    @sync_to_async
+    def get_or_create_chatroom(self, room_name):
+        # retrieve users and item post
+        (requester_name, item_post_author_name,
+         item_post_id) = split_room_name(room_name)
+        try:
+            self.requester = User.objects.get(username=requester_name)
+            self.post_author = User.objects.get(username=item_post_author_name)
+            self.item_post = ItemPost.objects.get(
+                id=item_post_id, created_by=self.post_author)
+
+            # retrieve chatroom instance from the database
+            chatroom, created = Chatroom.objects.get_or_create(
+                name=self.room_name, requester=self.requester, post=self.item_post)
+            return chatroom
+        except ObjectDoesNotExist:
+            print('error: invalid url')
+            return None
+
+    @sync_to_async
+    def save_message_to_database(self, message_content, sender_name, chatroom):
+        # store chat message into the database
+        sender = User.objects.get(username=sender_name)
+        return Message.objects.create(
+            content=message_content,
+            sender=sender,
+            chatroom=chatroom
+        )
+
+    @sync_to_async
+    def get_message_history_in_dict(self, chatroom):
+        messages = chatroom.messages.all()
+        print(messages)
+        return MessageSerializer(messages, many=True).data
