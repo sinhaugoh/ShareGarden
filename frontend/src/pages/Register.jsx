@@ -41,7 +41,7 @@ export default function Register() {
   }
 
   return (
-    <div className="d-flex vh-100 align-items-center">
+    <div className="d-flex vh-75 align-items-center">
       <div className="container px-0">
         <div className="row gx-5 justify-content-center">
           <div className="col-4 d-none d-xl-block my-auto">
