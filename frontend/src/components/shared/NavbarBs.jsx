@@ -17,7 +17,7 @@ export default function NavbarBs() {
   return (
     <Navbar expand="lg" sticky="top" className="bg-white shadow-sm">
       <Container>
-        <Navbar.Brand to="/" as={Link}>
+        <Navbar.Brand to="/" as={Link} className="fs-2 fw-lighter">
           ShareGarden
         </Navbar.Brand>
         <Navbar.Toggle />
