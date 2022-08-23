@@ -6,13 +6,13 @@ from core.models import User, ItemPost
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'profile_image']
+        fields = ['id', 'username', 'profile_image']
 
 
 class ItemPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPost
-        fields = ['title']
+        fields = ['id', 'title']
 
 
 class ChatroomSerializer(serializers.ModelSerializer):

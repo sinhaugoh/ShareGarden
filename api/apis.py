@@ -207,13 +207,9 @@ class Chats(APIView):
             except Message.DoesNotExist:
                 pass
 
-            last_message = MessageSerializer(instance=last_message).data
+            if last_message is not None:
+                last_message = MessageSerializer(instance=last_message).data
+
             payload.append({**chatroom_dict, 'last_message': last_message})
 
         return Response(payload, status=status.HTTP_200_OK)
-
-    # permission_classes = [permissions.IsAuthenticated]
-    # serializer_class = ChatroomSerializer
-
-    # def get_queryset(self):
-    #     return Chatroom.objects.filter(Q(requester=self.request.user) | Q(requestee=self.request.user))

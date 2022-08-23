@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useFetch from "../hooks/useFetch";
 
 const AuthContext = createContext({});
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import useWebSocket from "react-use-websocket";
+import { Container, Row, Col } from "react-bootstrap";
 
 export default function Chatroom() {
   const { user } = useAuth();
@@ -42,6 +43,8 @@ export default function Chatroom() {
 
   console.log("messages:", messages);
 
+  useEffect(() => {}, []);
+
   // useEffect(() => {
   //   const chatSocket = new WebSocket(`ws://127.0.0.1:8000/ws/${room_name}/`);
   //   console.log("chat", chatSocket);
@@ -70,19 +73,32 @@ export default function Chatroom() {
     );
 
   return (
-    <div>
-      <h1>Chatroom</h1>
+    <Container className="bg-white mt-5 vh-75 border border-grey">
+      <Row>
+        {/*
+      <Image
+      thumbnail
+      roundedCircle
+      src={
+        data.username === user.username
+        ? user.profile_image ?? DEFAULT_PROFILE_PIC_PATH
+        : data.profile_image ?? DEFAULT_PROFILE_PIC_PATH
+      }
+      className="profile-page-profile-img"
+      />
+    */}
+      </Row>
       <button
         onClick={() =>
           sendJsonMessage({
             type: "chat_message",
-            message: "hi there",
+            message: "hi there fhdashf ashfhdashfhd ashsdfh fdasf hafsdhf ah",
             username: user.username,
           })
         }
       >
         Send
       </button>
-    </div>
+    </Container>
   );
 }

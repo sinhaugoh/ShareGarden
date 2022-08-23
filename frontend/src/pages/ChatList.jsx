@@ -1,22 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import useFetch from "../hooks/useFetch";
+import { Container, Row, Col } from "react-bootstrap";
+import ChatListCard from "../components/chatlist/ChatListCard";
 
 export default function ChatList() {
-  const { logout } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+  const { data: chatList, isLoading, error } = useFetch("/api/chats/");
 
-  async function handleLogout() {
-    setIsLoading(true);
-    await logout();
-    setIsLoading(false);
-  }
+  console.log("chatlist", chatList);
+
+  //TODO: implement error page
+  if (error) return <h1>{error}</h1>;
+
+  //TODO implement loading page
+  if (isLoading) return <h1>Loading...</h1>;
 
   return (
-    <>
-      <h1>Chat list</h1>
-      <button onClick={handleLogout}>
-        {isLoading ? "logging out" : "logout"}
-      </button>
-    </>
+    <Container className="mt-3 bg-white">
+      <h2 className="mb-3">Chats</h2>
+      <Row lg={3} md={2} sm={1} xs={1}>
+        {chatList.map((chatroom) => {
+          if (chatroom.last_message === null) return null;
+
+          return (
+            <Col className="mb-3">
+              <ChatListCard
+                requester={chatroom.requester}
+                requestee={chatroom.requestee}
+                itemPost={chatroom.post}
+                lastMessage={chatroom.last_message.content}
+              />
+            </Col>
+          );
+        })}
+      </Row>
+    </Container>
   );
 }
