@@ -3,7 +3,15 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import useWebSocket from "react-use-websocket";
 import useFetch from "../hooks/useFetch";
-import { Container, Row, Col, Image } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Image,
+  InputGroup,
+  Form,
+  Button,
+} from "react-bootstrap";
 import MessageBubble from "../components/chatroom/MessageBubble";
 import { DEFAULT_PROFILE_PIC_PATH } from "../constants";
 
@@ -16,6 +24,7 @@ export default function Chatroom() {
     error,
   } = useFetch(`/api/chatroom/${room_name}/`);
   const [messages, setMessages] = useState([]);
+  const [messageInput, setMessageInput] = useState("");
   const [hasError, setHasError] = useState(false);
   const { readyState, sendJsonMessage } = useWebSocket(
     `ws://127.0.0.1:8000/ws/${room_name}/`,
@@ -37,7 +46,7 @@ export default function Chatroom() {
 
         switch (data.type) {
           case "chat_message_echo":
-            setMessages((prev) => [...prev, data.message]);
+            setMessages((prev) => [data.message, ...prev]);
             break;
           case "message_history":
             setMessages(data.messages);
@@ -51,8 +60,25 @@ export default function Chatroom() {
 
   console.log("messages:", messages);
   console.log("chatroom", chatroomDetail);
+  console.log("message input: ", messageInput);
 
   useEffect(() => {}, []);
+
+  function handleInputOnChange(event) {
+    setMessageInput(event.target.value);
+  }
+  function handleMessageOnSend() {
+    if (messageInput === "") return;
+
+    sendJsonMessage({
+      type: "chat_message",
+      message: messageInput,
+      username: user.username,
+    });
+
+    // clear previous input
+    setMessageInput("");
+  }
 
   // useEffect(() => {
   //   const chatSocket = new WebSocket(`ws://127.0.0.1:8000/ws/${room_name}/`);
@@ -132,7 +158,21 @@ export default function Chatroom() {
           })}
         </Col>
       </Row>
-      <Row className=" border-top" style={{ height: "100px" }}></Row>
+      <Row className=" border-top py-3">
+        <Col>
+          <InputGroup>
+            <Form.Control
+              placeholder="Type something..."
+              aria-label="Type something..."
+              aria-describedby="basic-addon2"
+              onChange={handleInputOnChange}
+            />
+            <Button variant="outline-secondary" onClick={handleMessageOnSend}>
+              Send
+            </Button>
+          </InputGroup>
+        </Col>
+      </Row>
     </Container>
   );
 }
