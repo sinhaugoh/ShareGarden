@@ -213,3 +213,10 @@ class Chats(APIView):
             payload.append({**chatroom_dict, 'last_message': last_message})
 
         return Response(payload, status=status.HTTP_200_OK)
+
+
+class ChatroomDetail(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ChatroomSerializer
+    queryset = Chatroom.objects.all()
+    lookup_field = 'name'

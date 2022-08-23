@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ItemPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPost
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'cover_image']
 
 
 class ChatroomSerializer(serializers.ModelSerializer):
@@ -26,8 +26,9 @@ class ChatroomSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    sender = serializers.SlugRelatedField(
-        read_only=True, slug_field='username')
+    # sender = serializers.SlugRelatedField(
+    #     read_only=True, slug_field='username')
+    sender = UserSerializer()
 
     class Meta:
         model = Message

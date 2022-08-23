@@ -43,6 +43,26 @@ body {
   object-fit: cover;
 }
 
+/* chatroom */
+.chat-container {
+  display: flex;
+  flex-direction: column-reverse;
+  /* gap: 1rem; */
+  /* flex: 1; */
+  overflow-y: auto;
+  height: 500px;
+}
+
+/* .chat-container::-webkit-scrollbar { */
+/*   width: 0.2rem; */
+/* } */
+
+/* .chat-container::-webkit-scrollbar-thumb { */
+/*   background-color: #ffffff39; */
+/*   width: 0.1rem; */
+/*   border-radius: 1rem; */
+/* } */
+
 /* general */
 .vh-75 {
   height: 75vh;

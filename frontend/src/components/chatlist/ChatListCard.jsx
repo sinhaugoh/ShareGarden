@@ -2,6 +2,7 @@ import { Card, Image, Button } from "react-bootstrap";
 import { createRoomName } from "../../utils";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { DEFAULT_PROFILE_PIC_PATH } from "../../constants";
 
 export default function ChatListCard({
   requester,
@@ -31,7 +32,7 @@ export default function ChatListCard({
         <Image
           roundedCircle
           thumbnail
-          src={chatTarget.profile_image}
+          src={chatTarget.profile_image ?? DEFAULT_PROFILE_PIC_PATH}
           height="70px"
           className="me-3"
           style={{ objectFit: "cover", height: "70px", width: "70px" }}

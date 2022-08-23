@@ -31,7 +31,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         if self.chatroom is None:
             # return 404 if chatroom cannot be retrieved or created (invalid link)
-            print('hello')
             await self.close(code=404)
             return
 
@@ -42,7 +41,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         # fetch message history from database
         messages = await self.get_message_history_in_dict(self.chatroom)
-        print(messages)
 
         await self.accept()
         print("Connected!")
@@ -64,8 +62,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         if message_type == 'chat_message':
             # save message into the database
             message = await self.save_message_to_database(content['message'], content['username'], self.chatroom)
-            print('username:', message.sender.username)
-            print('message:', message.content)
 
             # broadcast the message to everyone connected to the
             await self.channel_layer.group_send(
@@ -79,7 +75,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         return super().receive_json(content, **kwargs)
 
     async def chat_message_echo(self, event):
-        print('event', event)
         await self.send_json(event)
 
     @sync_to_async
@@ -111,6 +106,5 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     @sync_to_async
     def get_message_history_in_dict(self, chatroom):
-        messages = chatroom.messages.all()
-        print(messages)
+        messages = chatroom.messages.all().order_by('-timestamp')
         return MessageSerializer(messages, many=True).data

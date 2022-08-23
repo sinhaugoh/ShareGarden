@@ -20,11 +20,11 @@ export default function ChatList() {
     <Container className="mt-3 bg-white">
       <h2 className="mb-3">Chats</h2>
       <Row lg={3} md={2} sm={1} xs={1}>
-        {chatList.map((chatroom) => {
+        {chatList.map((chatroom, index) => {
           if (chatroom.last_message === null) return null;
 
           return (
-            <Col className="mb-3">
+            <Col className="mb-3" key={index}>
               <ChatListCard
                 requester={chatroom.requester}
                 requestee={chatroom.requestee}
