@@ -18,7 +18,16 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.group_name = 'chat_{}'.format(self.room_name)
-        self.chatroom = await self.get_or_create_chatroom(self.room_name)
+        (requester_name, item_post_author_name,
+         item_post_id) = split_room_name(self.room_name)
+
+        # make sure logged in user are authorised to connect to the chatroom
+        self.user = self.scope['user']
+        if requester_name != self.user.username and item_post_author_name != self.user.username:
+            await self.close()
+            return
+
+        self.chatroom = await self.get_or_create_chatroom(requester_name, item_post_author_name, item_post_id)
 
         if self.chatroom is None:
             # return 404 if chatroom cannot be retrieved or created (invalid link)
@@ -74,10 +83,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json(event)
 
     @sync_to_async
-    def get_or_create_chatroom(self, room_name):
+    def get_or_create_chatroom(self, requester_name, item_post_author_name, item_post_id):
         # retrieve users and item post
-        (requester_name, item_post_author_name,
-         item_post_id) = split_room_name(room_name)
         try:
             self.requester = User.objects.get(username=requester_name)
             self.post_author = User.objects.get(username=item_post_author_name)
