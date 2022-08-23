@@ -6,17 +6,23 @@ from core.models import User, ItemPost
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username']
+        fields = ['username', 'profile_image']
 
-# class ItemPostSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ItemPost
-#         field = ['title']
 
-# class ChatroomSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Chatroom
-#         fields = ['']
+class ItemPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemPost
+        fields = ['title']
+
+
+class ChatroomSerializer(serializers.ModelSerializer):
+    post = ItemPostSerializer()
+    requester = UserSerializer()
+    requestee = UserSerializer()
+
+    class Meta:
+        model = Chatroom
+        fields = ['name', 'post', 'requester', 'requestee']
 
 
 class MessageSerializer(serializers.ModelSerializer):

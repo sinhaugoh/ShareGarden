@@ -4,9 +4,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import logout, authenticate, login
+
+from chat.serializers import ChatroomSerializer, MessageSerializer
 from .constants import *
 from .serializers import *
 from core.models import *
+from chat.models import *
+from chat.serializers import ChatroomSerializer
 from django.db.models import Q
 import googlemaps
 
@@ -182,3 +186,34 @@ class ItemPostDetail(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = ItemPostSerializer
     queryset = ItemPost.objects.all()
+
+
+class Chats(APIView):
+    def get(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        payload = []
+        # retrieve chatrooms
+        chatrooms = Chatroom.objects.filter(
+            Q(requester=self.request.user) | Q(requestee=self.request.user))
+
+        for chatroom in chatrooms:
+            chatroom_dict = ChatroomSerializer(instance=chatroom).data
+            last_message = None
+            try:
+                last_message = chatroom.messages.latest('timestamp')
+            except Message.DoesNotExist:
+                pass
+
+            last_message = MessageSerializer(instance=last_message).data
+            payload.append({**chatroom_dict, 'last_message': last_message})
+
+        return Response(payload, status=status.HTTP_200_OK)
+
+    # permission_classes = [permissions.IsAuthenticated]
+    # serializer_class = ChatroomSerializer
+
+    # def get_queryset(self):
+    #     return Chatroom.objects.filter(Q(requester=self.request.user) | Q(requestee=self.request.user))

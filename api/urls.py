@@ -8,5 +8,6 @@ urlpatterns = [
     path('itemposts/', ItemPostList.as_view(), name='item-post-list'),
     path('itempost/<int:pk>/', ItemPostDetail.as_view(), name='item-post-detail'),
     path('user/<str:username>/', UserApi.as_view(), name='user'),
-    path('account/update/', ProfileUpdate.as_view(), name='account-update')
+    path('account/update/', ProfileUpdate.as_view(), name='account-update'),
+    path('chats/', Chats.as_view(), name='chat-list'),
 ]

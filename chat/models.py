@@ -9,7 +9,9 @@ class Chatroom(models.Model):
     name = models.CharField(max_length=500)
     post = models.ForeignKey(ItemPost, on_delete=models.DO_NOTHING)
     requester = models.ForeignKey(
-        get_user_model(), on_delete=models.DO_NOTHING)
+        get_user_model(), on_delete=models.DO_NOTHING, related_name='requester_chatrooms')
+    requestee = models.ForeignKey(
+        get_user_model(), on_delete=models.DO_NOTHING, related_name='requestee_chatrooms')
     # online = models.ManyToManyField(to=get_user_model(), blank=True)
 
 
