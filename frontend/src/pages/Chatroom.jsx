@@ -210,6 +210,7 @@ export default function Chatroom() {
       <Row className=" border-top py-3">
         <Col>
           {isDeal === null &&
+            chatroomDetail.post.quantity > 0 &&
             chatroomDetail.requestee.username === user.username && (
               <div className="border rounded mb-1 d-flex justify-content-between align-items-center p-2">
                 <div>Is this a deal?</div>

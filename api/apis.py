@@ -271,6 +271,10 @@ class Transactions(APIView):
                 )
                 # modify the quantity of the item post
                 item_post.quantity -= data['request_amount']
+                # change item post to inactive if quantity becomes 0
+                if item_post.quantity == 0:
+                    item_post.is_active = False
+
                 item_post.save()
 
                 return Response(TransactionSerializer(instance=transaction_instance).data, status=status.HTTP_201_CREATED)
