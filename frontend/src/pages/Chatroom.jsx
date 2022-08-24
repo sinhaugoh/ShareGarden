@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import useWebSocket from "react-use-websocket";
 import useFetch from "../hooks/useFetch";
+import { getCookie } from "../utils";
 import {
   Container,
   Row,
@@ -29,6 +30,7 @@ export default function Chatroom() {
   const [hasError, setHasError] = useState(false);
   const [isDeal, setIsDeal] = useState(null);
   const [dealAmount, setDealAmount] = useState(1);
+  const [transactionError, setTransactionError] = useState(null);
   const [note, setNote] = useState(null);
   const { readyState, sendJsonMessage } = useWebSocket(
     `ws://127.0.0.1:8000/ws/${room_name}/`,
@@ -107,6 +109,31 @@ export default function Chatroom() {
         return prev + 1;
       }
     });
+  }
+
+  async function handleDealConfirmOnClick() {
+    setTransactionError(null);
+    let response = await fetch("/api/transactions/", {
+      method: "POST",
+      body: JSON.stringify({
+        request_amount: dealAmount,
+        note: note,
+        requester_id: chatroomDetail.requester.id,
+        requestee_id: chatroomDetail.requestee.id,
+        item_post_id: chatroomDetail.post.id,
+      }),
+      headers: {
+        "X-CSRFToken": getCookie("csrftoken"),
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.status === 400) {
+      setTransactionError(await response.json());
+    }
+    if (response.status === 201) {
+      setIsDeal(false);
+    }
   }
 
   console.log("ready state", readyState);
@@ -200,33 +227,38 @@ export default function Chatroom() {
                 </div>
               </div>
             )}
-          {isDeal !== null && isDeal === true && (
-            <div className="border rounded mb-1 d-flex flex-wrap p-2 align-items-center justify-content-between">
-              <div className="d-flex flex-wrap align-items-center">
-                <div className="d-flex align-items-center">
-                  <div className="me-1">Amount </div>
+          {isDeal && (
+            <>
+              <div className="border rounded mb-1 d-flex flex-wrap p-2 align-items-center justify-content-between">
+                <div className="d-flex flex-wrap align-items-center">
                   <div className="d-flex align-items-center">
-                    <Button onClick={handleMinusAmount}>-</Button>
-                    <div className="mx-2">{dealAmount}</div>
-                    <Button onClick={handlePlusAmount}>+</Button>
+                    <div className="me-1">Amount </div>
+                    <div className="d-flex align-items-center">
+                      <Button onClick={handleMinusAmount}>-</Button>
+                      <div className="mx-2">{dealAmount}</div>
+                      <Button onClick={handlePlusAmount}>+</Button>
+                    </div>
+                  </div>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-2">Note(optional)</div>
+                    <Form.Control
+                      placeholder="type in some note..."
+                      aria-label="type in some note..."
+                      aria-describedby="basic-addon2"
+                      onChange={handleNoteInputOnChange}
+                      value={note}
+                      className="mx-2"
+                    />
                   </div>
                 </div>
-                <div className="d-flex align-items-center">
-                  <div className="ms-2">Note(optional)</div>
-                  <Form.Control
-                    placeholder="type in some note..."
-                    aria-label="type in some note..."
-                    aria-describedby="basic-addon2"
-                    onChange={handleNoteInputOnChange}
-                    value={note}
-                    className="mx-2"
-                  />
-                </div>
+                <Button className="px-4" onClick={handleDealConfirmOnClick}>
+                  Confirm
+                </Button>
               </div>
-              <Button className="px-4" onClick={() => setIsDeal(true)}>
-                Confirm
-              </Button>
-            </div>
+              {transactionError && (
+                <div className="text-danger">{transactionError}</div>
+              )}
+            </>
           )}
           <InputGroup>
             <Form.Control

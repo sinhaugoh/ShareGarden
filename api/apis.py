@@ -224,6 +224,17 @@ class ChatroomDetail(generics.RetrieveAPIView):
 
 
 class Transactions(APIView):
+    def get(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        transactions = Transaction.objects.filter(
+            requestee=user).order_by('-date_created')
+        serializer = TransactionSerializer(instance=transactions, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def post(self, request):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -262,6 +273,6 @@ class Transactions(APIView):
                 item_post.quantity -= data['request_amount']
                 item_post.save()
 
-                return Response(TransactionsSerializer(instance=transaction_instance).data, status=status.HTTP_201_CREATED)
+                return Response(TransactionSerializer(instance=transaction_instance).data, status=status.HTTP_201_CREATED)
             except:
                 return Response({'detail': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)

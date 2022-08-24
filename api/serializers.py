@@ -263,7 +263,7 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
         return item_post
 
 
-class TransactionsSerializer(serializers.ModelSerializer):
+class TransactionSerializer(serializers.ModelSerializer):
     requester = UserSerializer()
     requestee = UserSerializer()
     item_post = ItemPostSerializer()
