@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import useWebSocket from "react-use-websocket";
@@ -27,6 +27,9 @@ export default function Chatroom() {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const [hasError, setHasError] = useState(false);
+  const [isDeal, setIsDeal] = useState(null);
+  const [dealAmount, setDealAmount] = useState(1);
+  const [note, setNote] = useState(null);
   const { readyState, sendJsonMessage } = useWebSocket(
     `ws://127.0.0.1:8000/ws/${room_name}/`,
     {
@@ -39,7 +42,7 @@ export default function Chatroom() {
         console.log("Disconnected!");
       },
       onError: (e) => {
-        console.log("eeror", e);
+        console.log("error", e);
         setHasError(true);
       },
       onMessage: (e) => {
@@ -62,12 +65,17 @@ export default function Chatroom() {
   console.log("messages:", messages);
   console.log("chatroom", chatroomDetail);
   console.log("message input: ", messageInput);
-
-  useEffect(() => {}, []);
+  console.log("isdeal", isDeal);
+  console.log("note", note);
 
   function handleInputOnChange(event) {
     setMessageInput(event.target.value);
   }
+
+  function handleNoteInputOnChange(event) {
+    setNote(event.target.value);
+  }
+
   function handleMessageOnSend() {
     if (messageInput === "") return;
 
@@ -81,24 +89,25 @@ export default function Chatroom() {
     setMessageInput("");
   }
 
-  // useEffect(() => {
-  //   const chatSocket = new WebSocket(`ws://127.0.0.1:8000/ws/${room_name}/`);
-  //   console.log("chat", chatSocket);
+  function handleMinusAmount() {
+    setDealAmount((prev) => {
+      if (prev - 1 < 1) {
+        return prev;
+      } else {
+        return prev - 1;
+      }
+    });
+  }
 
-  //   // callback for when the websocket connection is open
-  //   chatSocket.onopen = function () {
-  //     console.log("connecteddddd");
-  //   };
-
-  //   // callback for when the websocket connection is disconnected
-  //   chatSocket.onclose = function () {
-  //     console.log("disconnectedddd");
-  //   };
-
-  //   chatSocket.onmessage = function (e) {
-  //     console.log("message", e);
-  //   };
-  // }, [room_name]);
+  function handlePlusAmount() {
+    setDealAmount((prev) => {
+      if (prev + 1 > chatroomDetail.post.quantity) {
+        return prev;
+      } else {
+        return prev + 1;
+      }
+    });
+  }
 
   console.log("ready state", readyState);
 
@@ -114,7 +123,7 @@ export default function Chatroom() {
   if (isLoading || readyState !== 1) return <div>Loading...</div>;
 
   return (
-    <Container className="bg-white mt-5 border border-grey d-flex flex-column">
+    <Container className="bg-white mt-5 border border-grey">
       <Row>
         <div className="d-flex align-items-center border-bottom py-2">
           <Image
@@ -173,6 +182,52 @@ export default function Chatroom() {
       </Row>
       <Row className=" border-top py-3">
         <Col>
+          {isDeal === null &&
+            chatroomDetail.requestee.username === user.username && (
+              <div className="border rounded mb-1 d-flex justify-content-between align-items-center p-2">
+                <div>Is this a deal?</div>
+                <div className="d-flex gap-2">
+                  <Button
+                    variant="secondary"
+                    className="px-4"
+                    onClick={() => setIsDeal(false)}
+                  >
+                    No
+                  </Button>
+                  <Button className="px-4" onClick={() => setIsDeal(true)}>
+                    Yes
+                  </Button>
+                </div>
+              </div>
+            )}
+          {isDeal !== null && isDeal === true && (
+            <div className="border rounded mb-1 d-flex flex-wrap p-2 align-items-center justify-content-between">
+              <div className="d-flex flex-wrap align-items-center">
+                <div className="d-flex align-items-center">
+                  <div className="me-1">Amount </div>
+                  <div className="d-flex align-items-center">
+                    <Button onClick={handleMinusAmount}>-</Button>
+                    <div className="mx-2">{dealAmount}</div>
+                    <Button onClick={handlePlusAmount}>+</Button>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center">
+                  <div className="ms-2">Note(optional)</div>
+                  <Form.Control
+                    placeholder="type in some note..."
+                    aria-label="type in some note..."
+                    aria-describedby="basic-addon2"
+                    onChange={handleNoteInputOnChange}
+                    value={note}
+                    className="mx-2"
+                  />
+                </div>
+              </div>
+              <Button className="px-4" onClick={() => setIsDeal(true)}>
+                Confirm
+              </Button>
+            </div>
+          )}
           <InputGroup>
             <Form.Control
               placeholder="Type something..."
@@ -190,14 +245,3 @@ export default function Chatroom() {
     </Container>
   );
 }
-// <button
-//   onClick={() =>
-//     sendJsonMessage({
-//       type: "chat_message",
-//       message: "hi there fhdashf ashfhdashfhd ashsdfh fdasf hafsdhf ah",
-//       username: user.username,
-//     })
-//   }
-// >
-//   Send
-// </button>

@@ -11,5 +11,6 @@ urlpatterns = [
     path('account/update/', ProfileUpdate.as_view(), name='account-update'),
     path('chats/', Chats.as_view(), name='chat-list'),
     path('chatroom/<str:name>/',
-         ChatroomDetail.as_view(), name='chatroom-detail')
+         ChatroomDetail.as_view(), name='chatroom-detail'),
+    path('transactions/', Transactions.as_view(), name='transactions')
 ]

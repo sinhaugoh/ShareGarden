@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import logout, authenticate, login
-
+from django.core.exceptions import ObjectDoesNotExist
 from chat.serializers import ChatroomSerializer, MessageSerializer
 from .constants import *
 from .serializers import *
@@ -12,6 +12,7 @@ from core.models import *
 from chat.models import *
 from chat.serializers import ChatroomSerializer
 from django.db.models import Q
+from django.db import transaction
 import googlemaps
 
 
@@ -220,3 +221,47 @@ class ChatroomDetail(generics.RetrieveAPIView):
     serializer_class = ChatroomSerializer
     queryset = Chatroom.objects.all()
     lookup_field = 'name'
+
+
+class Transactions(APIView):
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        with transaction.atomic():
+            data = request.data
+            requester = None
+            requestee = None
+            item_post = None
+
+            try:
+                requester = User.objects.get(id=data['requester_id'])
+                requestee = User.objects.get(id=data['requestee_id'])
+                item_post = ItemPost.objects.get(id=data['item_post_id'])
+            except ObjectDoesNotExist:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+            # make sure request amount is not more than quantity left
+            if data['request_amount'] > item_post.quantity:
+                return Response({'detail': 'Invalid request amount'}, status=status.HTTP_400_BAD_REQUEST)
+
+            print('requester', requester)
+            print('requestee', requestee)
+            print('item_post', item_post)
+
+            try:
+                # create new transaction
+                transaction_instance = Transaction.objects.create(
+                    request_amount=data['request_amount'],
+                    note=data.get('note', ''),
+                    item_post=item_post,
+                    requester=requester,
+                    requestee=requestee,
+                )
+                # modify the quantity of the item post
+                item_post.quantity -= data['request_amount']
+                item_post.save()
+
+                return Response(TransactionsSerializer(instance=transaction_instance).data, status=status.HTTP_201_CREATED)
+            except:
+                return Response({'detail': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)

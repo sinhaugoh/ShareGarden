@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ItemPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPost
-        fields = ['id', 'title', 'cover_image']
+        fields = ['id', 'title', 'cover_image', 'quantity']
 
 
 class ChatroomSerializer(serializers.ModelSerializer):

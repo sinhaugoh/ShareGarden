@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.db import transaction
-from core.models import ItemPost, ItemPostImage
+from core.models import ItemPost, ItemPostImage, Transaction
 import googlemaps
 from .constants import GOOGLE_API_KEY
 
@@ -261,3 +261,14 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
             ItemPostImage.objects.bulk_create(post_images)
 
         return item_post
+
+
+class TransactionsSerializer(serializers.ModelSerializer):
+    requester = UserSerializer()
+    requestee = UserSerializer()
+    item_post = ItemPostSerializer()
+
+    class Meta:
+        model = Transaction
+        fields = ['request_amount', 'is_completed', 'date_created',
+                  'note', 'requester', 'requestee', 'item_post']
