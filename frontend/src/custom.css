@@ -68,6 +68,14 @@ body {
   height: 75vh;
 }
 
+.mw-80 {
+  max-width: 80%;
+}
+
 .border-grey {
   border-color: grey;
+}
+
+.bg-lightgreen {
+  background-color: #1bf097;
 }

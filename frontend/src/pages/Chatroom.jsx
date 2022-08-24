@@ -12,7 +12,8 @@ import {
   Form,
   Button,
 } from "react-bootstrap";
-import MessageBubble from "../components/chatroom/MessageBubble";
+import MessageBubbleLeft from "../components/chatroom/MessageBubbleLeft";
+import MessageBubbleRight from "../components/chatroom/MessageBubbleRight";
 import { DEFAULT_PROFILE_PIC_PATH } from "../constants";
 
 export default function Chatroom() {
@@ -99,6 +100,8 @@ export default function Chatroom() {
   //   };
   // }, [room_name]);
 
+  console.log("ready state", readyState);
+
   //TODO: implement 404 page
   if (hasError)
     return (
@@ -108,7 +111,7 @@ export default function Chatroom() {
     );
 
   //TODO: implement loading page
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading || readyState !== 1) return <div>Loading...</div>;
 
   return (
     <Container className="bg-white mt-5 border border-grey d-flex flex-column">
@@ -148,13 +151,23 @@ export default function Chatroom() {
       <Row style={{ height: "500px" }}>
         <Col className="chat-container">
           {messages.map((message, index) => {
-            return (
-              <MessageBubble
-                profile_image={message.sender.profile_image}
-                content={message.content}
-                key={index}
-              />
-            );
+            if (message.sender.username === user.username) {
+              return (
+                <MessageBubbleRight
+                  profile_image={message.sender.profile_image}
+                  content={message.content}
+                  key={index}
+                />
+              );
+            } else {
+              return (
+                <MessageBubbleLeft
+                  profile_image={message.sender.profile_image}
+                  content={message.content}
+                  key={index}
+                />
+              );
+            }
           })}
         </Col>
       </Row>
@@ -166,6 +179,7 @@ export default function Chatroom() {
               aria-label="Type something..."
               aria-describedby="basic-addon2"
               onChange={handleInputOnChange}
+              value={messageInput}
             />
             <Button variant="outline-secondary" onClick={handleMessageOnSend}>
               Send
