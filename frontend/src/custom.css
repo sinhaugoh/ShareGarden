@@ -17,24 +17,24 @@ body {
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  height: 50px;
-  width: 50px;
+  height: 60px;
+  aspect-ratio: 1;
   background-color: black;
   border-radius: 100%;
   background-image: none;
 }
 
-.carousel-control-next-icon::after {
-  content: ">";
-  font-size: 28px;
-  color: white;
-}
+/* .carousel-control-next-icon::after { */
+/*   content: ">"; */
+/*   font-size: 28px; */
+/*   color: white; */
+/* } */
 
-.carousel-control-prev-icon::after {
-  content: "<";
-  font-size: 28px;
-  color: white;
-}
+/* .carousel-control-prev-icon::after { */
+/*   content: "<"; */
+/*   font-size: 28px; */
+/*   color: white; */
+/* } */
 
 /* profile page */
 .profile-page-profile-img {
@@ -78,4 +78,15 @@ body {
 
 .bg-lightgreen {
   background-color: #1bf097;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #00af66 !important;
+  border-width: 0 !important;
+  box-shadow: none !important;
+}
+
+.btn-primary:hover {
+  background-color: #029658 !important;
 }
