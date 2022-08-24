@@ -3,8 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from .storage import OverwriteFileStorage
 import uuid
 
-# Create your models here.
-
 
 def get_profile_image_path(instance, filename):
     return 'images/profile_images/{}/profile_image.jpg'.format(str(instance.pk))
@@ -110,4 +108,5 @@ class Transaction(models.Model):
         User, on_delete=models.DO_NOTHING, related_name='requester')
     requestee = models.ForeignKey(
         User, on_delete=models.DO_NOTHING, related_name='requestee')
+    note = models.CharField(max_length=256, blank=True, null=True)
     item_post = models.ForeignKey(ItemPost, on_delete=models.CASCADE)
