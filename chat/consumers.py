@@ -22,10 +22,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
          item_post_id) = split_room_name(self.room_name)
 
         # make sure logged in user are authorised to connect to the chatroom
-        # self.user = self.scope['user']
-        # if requester_name != self.user.username and item_post_author_name != self.user.username:
-        #     await self.close()
-        #     return
+        self.user = self.scope['user']
+        if requester_name != self.user.username and item_post_author_name != self.user.username:
+            await self.close()
+            return
 
         self.chatroom = await self.get_or_create_chatroom(requester_name, item_post_author_name, item_post_id)
 
