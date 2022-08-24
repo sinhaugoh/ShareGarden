@@ -11,6 +11,7 @@ import ItemPostDetail from "./pages/ItemPostDetail";
 import Profile from "./pages/Profile";
 import ItemPostUpdate from "./pages/ItemPostUpdate";
 import ProfileUpdate from "./pages/ProfileUpdate";
+import Transactions from "./pages/Transactions";
 
 function App() {
   return (
@@ -53,6 +54,14 @@ function App() {
                 //TODO: change redirected path
                 <RequireAuth redirectedPath="/chatlist/">
                   <Chatroom />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/transactions/"
+              element={
+                <RequireAuth redirectedPath="/transactions/">
+                  <Transactions />
                 </RequireAuth>
               }
             />

@@ -50,7 +50,9 @@ export default function NavbarBs() {
                   >
                     Edit profile
                   </NavDropdown.Item>
-                  <NavDropdown.Item>Transactions</NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => navigate("/transactions/")}>
+                    Transactions
+                  </NavDropdown.Item>
                   <NavDropdown.Item as="button" onClick={logout}>
                     Sign out
                   </NavDropdown.Item>
