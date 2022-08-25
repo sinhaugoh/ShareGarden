@@ -594,6 +594,7 @@ class ItemPostDetailGETTest(APITestCase):
         data = response.json()
 
         self.assertEqual(data, {
+            'id': self.item_post_1.id,
             'title': self.item_post_1.title,
             'description': self.item_post_1.description,
             'quantity': self.item_post_1.quantity,

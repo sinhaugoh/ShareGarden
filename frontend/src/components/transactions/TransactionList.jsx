@@ -1,13 +1,23 @@
 import TransactionTile from "./TransactionTile";
 import { Row, Col, Accordion } from "react-bootstrap";
 import useFetch from "../../hooks/useFetch";
+import { useState, useEffect } from "react";
+import { getCookie } from "../../utils";
 
 export default function TransactionList() {
   const {
     data: transactionsData,
     isLoading,
     error,
+    refetchData,
   } = useFetch("/api/transactions/");
+  // const [shouldRefresh, setShouldRefresh] = useState(false);
+
+  // useEffect(() => {
+  //   if (shouldRefresh) {
+  //     window.location.reload();
+  //   }
+  // }, [shouldRefresh]);
 
   //TODO: implement loading page
   if (isLoading) return <h1>loading...</h1>;
@@ -28,10 +38,27 @@ export default function TransactionList() {
     }
   }
 
+  async function handleButtonOnClick(transaction_id) {
+    const response = await fetch("/api/transaction/markAsCompleted/", {
+      method: "POST",
+      body: JSON.stringify({
+        transaction_id: transaction_id,
+      }),
+      headers: {
+        "X-CSRFToken": getCookie("csrftoken"),
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.status === 200) {
+      refetchData();
+    }
+  }
+
   return (
     <Row>
       <Col>
-        <Accordion alwaysOpen>
+        <Accordion alwaysOpen defaultActiveKey="0">
           <Accordion.Item eventKey="0">
             <Accordion.Header>
               <h4>On-going</h4>
@@ -45,6 +72,9 @@ export default function TransactionList() {
                       itemPostTitle={transaction.item_post.title}
                       note={transaction.note}
                       requestAmount={transaction.request_amount}
+                      is_completed={transaction.is_completed}
+                      handleButtonOnClick={handleButtonOnClick}
+                      id={transaction.id}
                     />
                   </Col>
                 ))}
@@ -58,12 +88,17 @@ export default function TransactionList() {
             <Accordion.Body>
               <Row lg={3} md={2} sm={1} xs={1}>
                 {completedTransaction.map((transaction) => (
-                  <TransactionTile
-                    requester={transaction.requester}
-                    itemPostTitle={transaction.item_post.title}
-                    note={transaction.note}
-                    requestAmount={transaction.request_amount}
-                  />
+                  <Col className="mb-3">
+                    <TransactionTile
+                      requester={transaction.requester}
+                      itemPostTitle={transaction.item_post.title}
+                      note={transaction.note}
+                      requestAmount={transaction.request_amount}
+                      is_completed={transaction.is_completed}
+                      handleButtonOnClick={handleButtonOnClick}
+                      id={transaction.id}
+                    />
+                  </Col>
                 ))}
               </Row>
             </Accordion.Body>

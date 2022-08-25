@@ -280,3 +280,25 @@ class Transactions(APIView):
                 return Response(TransactionSerializer(instance=transaction_instance).data, status=status.HTTP_201_CREATED)
             except:
                 return Response({'detail': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MarkTransactionAsCompleted(APIView):
+    def post(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        transaction_id = request.data.get('transaction_id', None)
+        try:
+            transaction = Transaction.objects.get(id=transaction_id)
+
+            # make sure only the author of the item post can modify the transaction
+            if transaction.requestee.username != user.username:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+            # mark is completed to true
+            transaction.is_completed = True
+            transaction.save()
+            return Response(status=status.HTTP_200_OK)
+        except Transaction.DoesNotExist:
+            return Response({'detail': 'Invalid transaction Id.'}, status=status.HTTP_400_BAD_REQUEST)

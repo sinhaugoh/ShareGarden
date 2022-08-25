@@ -27,5 +27,25 @@ export default function useFetch(url, options) {
     })();
   }, [url, options]);
 
-  return { data, isLoading, error };
+  async function refetchData() {
+    try {
+      setIsLoading(true);
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (response.status === 400) {
+        setError(data);
+      } else if (response.status > 400 && response.status < 600) {
+        throw new Error(`Error with status: ${response.status}`);
+      }
+
+      setData(data);
+    } catch (e) {
+      setError(e);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return { data, isLoading, error, refetchData };
 }
