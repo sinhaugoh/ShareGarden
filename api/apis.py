@@ -199,12 +199,15 @@ class ItemPostList(APIView):
 
 
 class ItemPostDetail(generics.RetrieveUpdateAPIView):
+    '''Retrieve/update item post based on id'''
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = ItemPostSerializer
     queryset = ItemPost.objects.all()
 
 
 class Chats(APIView):
+    '''Retrieve a list of chatrooms related to the logged in user'''
+
     def get(self, request):
         user = request.user
         if not user.is_authenticated:
@@ -232,6 +235,11 @@ class Chats(APIView):
 
 
 class Transactions(APIView):
+    '''
+    Get - retrieve a list of transactions related to the logged in user
+    Post - create a new transaction
+    '''
+
     def get(self, request):
         user = request.user
         if not user.is_authenticated:
