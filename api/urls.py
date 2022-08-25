@@ -10,8 +10,6 @@ urlpatterns = [
     path('user/<str:username>/', UserApi.as_view(), name='user'),
     path('account/update/', ProfileUpdate.as_view(), name='account-update'),
     path('chats/', Chats.as_view(), name='chat-list'),
-    path('chatroom/<str:name>/',
-         ChatroomDetail.as_view(), name='chatroom-detail'),
     path('transactions/', Transactions.as_view(), name='transactions'),
     path('transaction/markAsCompleted/', MarkTransactionAsCompleted.as_view(),
          name='mark-transaction-as-completed'),

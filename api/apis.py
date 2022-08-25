@@ -231,13 +231,6 @@ class Chats(APIView):
         return Response(payload, status=status.HTTP_200_OK)
 
 
-class ChatroomDetail(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = ChatroomSerializer
-    queryset = Chatroom.objects.all()
-    lookup_field = 'name'
-
-
 class Transactions(APIView):
     def get(self, request):
         user = request.user

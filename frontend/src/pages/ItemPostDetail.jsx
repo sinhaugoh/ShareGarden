@@ -27,9 +27,22 @@ export default function ItemPostDetail() {
               thumbnail
               src={data.created_by.profile_image ?? DEFAULT_PROFILE_PIC_PATH}
               height="70px"
-              style={{ objectFit: "cover", height: "70px", width: "70px" }}
+              style={{
+                objectFit: "cover",
+                height: "70px",
+                width: "70px",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                navigate(`/profile/${data?.created_by?.username}/`);
+              }}
             />
-            <h3>
+            <h3
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                navigate(`/profile/${data?.created_by?.username}/`);
+              }}
+            >
               <span className="fs-1 font-weight-bold">
                 {data?.created_by?.username}
               </span>{" "}
