@@ -25,7 +25,7 @@ export default function UserItemPostListing() {
   return (
     <Row>
       <Col>
-        <Accordion alwaysOpen>
+        <Accordion alwaysOpen defaultActiveKey="0">
           <Accordion.Item eventKey="0">
             <Accordion.Header>
               <h4>Active listing</h4>
