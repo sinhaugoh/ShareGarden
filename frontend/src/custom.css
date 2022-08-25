@@ -17,11 +17,10 @@ body {
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  height: 60px;
-  aspect-ratio: 1;
+  /* height: 50px; */
+  /* aspect-ratio: 1; */
   background-color: black;
   border-radius: 100%;
-  background-image: none;
 }
 
 /* .carousel-control-next-icon::after { */
