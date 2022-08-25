@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import useWebSocket from "react-use-websocket";
-import useFetch from "../hooks/useFetch";
 import { getCookie } from "../utils";
 import {
   Container,
@@ -20,11 +19,7 @@ import { DEFAULT_PROFILE_PIC_PATH } from "../constants";
 export default function Chatroom() {
   const { user } = useAuth();
   const { room_name } = useParams();
-  const {
-    data: chatroomDetail,
-    isLoading,
-    error,
-  } = useFetch(`/api/chatroom/${room_name}/`);
+  const [chatroomDetail, setChatroomDetail] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const [hasError, setHasError] = useState(false);
@@ -57,6 +52,8 @@ export default function Chatroom() {
           case "message_history":
             setMessages(data.messages);
             break;
+          case "chatroom_detail":
+            setChatroomDetail(data.chatroom_detail);
           default:
             break;
         }
@@ -147,7 +144,7 @@ export default function Chatroom() {
     );
 
   //TODO: implement loading page
-  if (isLoading || readyState !== 1) return <div>Loading...</div>;
+  if (!chatroomDetail || readyState !== 1) return <div>Loading...</div>;
 
   return (
     <Container className="bg-white mt-5 border border-grey">

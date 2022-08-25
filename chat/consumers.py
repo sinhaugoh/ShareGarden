@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import Chatroom, Message
 from .utils import split_room_name
 from core.models import User, ItemPost
-from .serializers import MessageSerializer
+from .serializers import MessageSerializer, ChatroomSerializer
 
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
@@ -49,6 +49,11 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json({
             'type': 'message_history',
             'messages': messages
+        })
+
+        await self.send_json({
+            'type': 'chatroom_detail',
+            'chatroom_detail': await self.convertChatroomToJson(self.chatroom)
         })
 
     async def disconnect(self, code):
@@ -108,3 +113,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     def get_message_history_in_dict(self, chatroom):
         messages = chatroom.messages.all().order_by('-timestamp')
         return MessageSerializer(messages, many=True).data
+
+    @sync_to_async
+    def convertChatroomToJson(self, chatroom):
+        return ChatroomSerializer(instance=chatroom).data
