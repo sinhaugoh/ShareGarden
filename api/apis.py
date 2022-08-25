@@ -108,9 +108,14 @@ class ItemPostList(APIView):
             q_objects_for_exclude.add(Q(created_by=request.user.id), Q.AND)
             q_objects_for_filter.add(Q(is_active=True), Q.AND)
         else:
-            # retrieve filters
+            # retrieve filters params
             user_filter = request.query_params.get('username')
+            query_filter = request.query_params.get('q')
+            category_filter = request.query_params.get('category')
+            item_type_filter = request.query_params.get('item_type')
 
+            print('category', category_filter)
+            print('item_type', item_type_filter)
             # include optional filters
             if user_filter:
                 # this filter is used in profile page
@@ -119,6 +124,16 @@ class ItemPostList(APIView):
                     q_objects_for_filter.add(Q(created_by=user), Q.AND)
                 except User.DoesNotExist:
                     return Response({'detail': 'Queried user not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            if query_filter:
+                q_objects_for_filter.add(
+                    Q(title__icontains=query_filter), Q.AND)
+
+            if category_filter:
+                q_objects_for_filter.add(Q(category=category_filter), Q.AND)
+
+            if item_type_filter:
+                q_objects_for_filter.add(Q(item_type=item_type_filter), Q.AND)
 
         # retrieve item posts with applied filters
         item_posts = ItemPost.objects.exclude(q_objects_for_exclude).filter(

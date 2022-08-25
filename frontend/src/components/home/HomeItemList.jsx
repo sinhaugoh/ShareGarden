@@ -3,7 +3,7 @@ import { Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
-export default function HomeItemList() {
+export default function HomeItemList({ query, category, itemType }) {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +13,11 @@ export default function HomeItemList() {
     (async function () {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/itemposts/");
+        const response = await fetch(
+          `/api/itemposts/?${query ? "q=" + query : ""}${
+            category !== "All" ? "&category=" + category : ""
+          }${itemType !== "All" ? "&item_type=" + itemType : ""}`
+        );
         const data = await response.json();
 
         if (response.status === 400) {
@@ -29,7 +33,7 @@ export default function HomeItemList() {
         setIsLoading(false);
       }
     })();
-  }, [user]);
+  }, [user, query, category, itemType]);
 
   if (isLoading) return <h1>Loading...</h1>;
   if (error)

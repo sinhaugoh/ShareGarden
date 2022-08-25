@@ -22,17 +22,6 @@ export default function NavbarBs() {
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
-          {user ? (
-            <Form className="d-flex ms-auto mt-3 mt-lg-0">
-              <Form.Control
-                type="search"
-                placeholder="Tomato seeds..."
-                aria-label="Search"
-                className="me-2"
-              />
-              <Button>Search</Button>
-            </Form>
-          ) : null}
           <Nav className="ms-auto">
             {user ? (
               <>
