@@ -103,7 +103,7 @@ class Transaction(models.Model):
     # status = models.CharField(
     #     max_length=10, choices=Status.choices, default=Status.PENDING)
     is_completed = models.BooleanField(default=False)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
     requester = models.ForeignKey(
         User, on_delete=models.DO_NOTHING, related_name='requester')
     requestee = models.ForeignKey(

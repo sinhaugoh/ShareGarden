@@ -230,7 +230,7 @@ class Transactions(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         transactions = Transaction.objects.filter(
-            requestee=user).order_by('-date_created')
+            requestee=user).order_by('-date_modified')
         serializer = TransactionSerializer(instance=transactions, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
