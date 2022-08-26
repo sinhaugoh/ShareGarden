@@ -252,7 +252,8 @@ class Transactions(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        if not request.user.is_authenticated:
+        user = request.user
+        if not user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         with transaction.atomic():
@@ -260,33 +261,37 @@ class Transactions(APIView):
             requester = None
             requestee = None
             item_post = None
+            request_amount = None
 
             try:
                 requester = User.objects.get(id=data['requester_id'])
                 requestee = User.objects.get(id=data['requestee_id'])
                 item_post = ItemPost.objects.get(id=data['item_post_id'])
+                request_amount = int(data.get('request_amount'))
             except ObjectDoesNotExist:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response({'detail': 'Invalid input.'}, status=status.HTTP_400_BAD_REQUEST)
+            except ValueError:
+                return Response({'detail': 'Invalid input.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # make sure request amount is not more than quantity left
-            if data['request_amount'] > item_post.quantity:
+            # make sure only the author of the item post can create transaction regarding the post
+            if requestee.username != user.username:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+            # make sure request amount is not more than quantity left or less than 1
+            if request_amount > item_post.quantity or request_amount < 1:
                 return Response({'detail': 'Invalid request amount'}, status=status.HTTP_400_BAD_REQUEST)
-
-            print('requester', requester)
-            print('requestee', requestee)
-            print('item_post', item_post)
 
             try:
                 # create new transaction
                 transaction_instance = Transaction.objects.create(
-                    request_amount=data['request_amount'],
+                    request_amount=request_amount,
                     note=data.get('note', ''),
                     item_post=item_post,
                     requester=requester,
                     requestee=requestee,
                 )
                 # modify the quantity of the item post
-                item_post.quantity -= data['request_amount']
+                item_post.quantity -= request_amount
                 # change item post to inactive if quantity becomes 0
                 if item_post.quantity == 0:
                     item_post.is_active = False
@@ -304,8 +309,8 @@ class MarkTransactionAsCompleted(APIView):
         if not user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        transaction_id = request.data.get('transaction_id', None)
         try:
+            transaction_id = int(request.data.get('transaction_id', None))
             transaction = Transaction.objects.get(id=transaction_id)
 
             # make sure only the author of the item post can modify the transaction
@@ -317,4 +322,6 @@ class MarkTransactionAsCompleted(APIView):
             transaction.save()
             return Response(status=status.HTTP_200_OK)
         except Transaction.DoesNotExist:
+            return Response({'detail': 'Invalid transaction Id.'}, status=status.HTTP_400_BAD_REQUEST)
+        except ValueError:
             return Response({'detail': 'Invalid transaction Id.'}, status=status.HTTP_400_BAD_REQUEST)

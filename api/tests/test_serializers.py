@@ -1,5 +1,4 @@
 from django.test import TestCase, override_settings
-
 from ..serializers import *
 from core.model_factories import *
 import tempfile

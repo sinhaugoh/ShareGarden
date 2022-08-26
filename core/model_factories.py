@@ -29,3 +29,15 @@ class ItemPostFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = ItemPost
+
+
+class TransactionFactory(factory.django.DjangoModelFactory):
+    request_amount = 1
+    is_completed = False
+    note = 'note'
+    requester = factory.SubFactory(UserFactory)
+    requestee = factory.SubFactory(UserFactory)
+    item_post = factory.SubFactory(ItemPostFactory)
+
+    class Meta:
+        model = Transaction

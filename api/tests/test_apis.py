@@ -4,9 +4,10 @@ from rest_framework.test import APITestCase, override_settings
 from unittest.mock import patch
 import tempfile
 import shutil
-
-
-from core.model_factories import *
+from chat.models import Chatroom, Message
+from core.model_factories import UserFactory, ItemPostFactory, TransactionFactory
+from chat.model_factories import ChatroomFactory
+from core.models import Transaction, User, ItemPost
 from core.tests.test_views import TEST_SERVER_DOMAIN, USER_PASSWORD
 
 MEDIA_ROOT = tempfile.mkdtemp()
@@ -641,3 +642,351 @@ class ItemPostDetailPATCHTest(APITestCase):
         shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
 
     # TODO: implement test for this
+
+
+@override_settings(MEDIA_ROOT=MEDIA_ROOT)
+class ChatsTest(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.requester = UserFactory.create()
+        self.post_author = UserFactory.create()
+        self.item_post = ItemPostFactory.create(created_by=self.post_author)
+        self.chatroom = ChatroomFactory.create(
+            requester=self.requester, requestee=self.post_author, post=self.item_post)
+        self.rel_url = '/api/chats/'
+        self.url = reverse('chat-list')
+
+        self.client.login(username=self.requester.username,
+                          password=USER_PASSWORD)
+
+    def tearDown(self):
+        super().tearDown()
+        User.objects.all().delete()
+        ItemPost.objects.all().delete()
+        Chatroom.objects.all().delete()
+        UserFactory.reset_sequence(0)
+        ItemPostFactory.reset_sequence(0)
+
+        # delete temp folder
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+
+    def test_urlIsWorking(self):
+        response = self.client.get(self.rel_url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_urlByNameIsWorking(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_return401IfUnauthenticated(self):
+        self.client.logout()
+        response = self.client.get(self.rel_url)
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_return200IfRequesterAuthenticated(self):
+        response = self.client.get(self.rel_url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_return200IfPostAuthorAuthenticated(self):
+        self.client.logout()
+        self.client.login(username=self.post_author.username,
+                          password=USER_PASSWORD)
+        response = self.client.get(self.rel_url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_returnCorrectNumberOfChatrooms(self):
+        response = self.client.get(self.rel_url)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+
+    def test_returnCorrectResult(self):
+        response = self.client.get(self.rel_url)
+        data = response.json()
+        self.assertEqual(data, [{
+            'name': self.chatroom.name,
+            'post': {
+                'cover_image': self.item_post.cover_image.url,
+                'id': self.item_post.id,
+                'quantity': self.item_post.quantity,
+                'title': self.item_post.title
+            },
+            'requestee': {
+                'id': self.post_author.id,
+                'profile_image': self.post_author.profile_image.url,
+                'username': self.post_author.username
+            },
+            'requester': {
+                'id': self.requester.id,
+                'profile_image': self.requester.profile_image.url,
+                'username': self.requester.username
+            },
+            'last_message': None
+        }])
+
+
+@override_settings(MEDIA_ROOT=MEDIA_ROOT)
+class TransactionsTest(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.requester = UserFactory.create()
+        self.post_author = UserFactory.create()
+        self.item_post = ItemPostFactory.create(created_by=self.post_author)
+        self.transaction = TransactionFactory.create(
+            requester=self.requester, requestee=self.post_author, item_post=self.item_post)
+        self.rel_url = '/api/transactions/'
+        self.url = reverse('transactions')
+
+        self.client.login(username=self.post_author.username,
+                          password=USER_PASSWORD)
+
+    def tearDown(self):
+        super().tearDown()
+        User.objects.all().delete()
+        ItemPost.objects.all().delete()
+        Transaction.objects.all().delete()
+        UserFactory.reset_sequence(0)
+        ItemPostFactory.reset_sequence(0)
+
+        # delete temp folder
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+
+    def test_urlIsWorking(self):
+        response = self.client.get(self.rel_url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_urlByNameIsWorking(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_return401IfUnauthenticated(self):
+        self.client.logout()
+        response = self.client.get(self.rel_url)
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_returnCorrectNumberOfTransactionsIfSuccess(self):
+        response = self.client.get(self.rel_url)
+        data = response.json()
+
+        self.assertEqual(len(data), 1)
+
+    def test_returnCorrectResultIfSuccessful(self):
+        response = self.client.get(self.rel_url)
+        data = response.json()
+        self.maxDiff = None
+        
+        self.assertEqual(data, [{
+                'id': self.transaction.id,
+                'is_completed': self.transaction.is_completed,
+                'note': self.transaction.note,
+                'request_amount': self.transaction.request_amount,
+                'requester': {
+                    'about': self.transaction.requester.about,
+                    'address': self.transaction.requester.address,
+                    'profile_image': self.transaction.requester.profile_image.url,
+                    'username': self.transaction.requester.username
+                    },
+                'requestee': {
+                    'about': self.transaction.requestee.about,
+                    'address': self.transaction.requestee.address,
+                    'profile_image': self.transaction.requestee.profile_image.url,
+                    'username': self.transaction.requestee.username
+                    },
+                'item_post': {
+                    'id': self.item_post.id,
+                    'title': self.item_post.title,
+                    'description': self.item_post.description,
+                    'quantity': self.item_post.quantity,
+                    'pick_up_information': self.item_post.pick_up_information,
+                    'category': self.item_post.category,
+                    'item_type': self.item_post.item_type,
+                    'days_to_harvest': self.item_post.days_to_harvest,
+                    'water_requirement': self.item_post.water_requirement,
+                    'growing_tips': self.item_post.growing_tips,
+                    'location': self.item_post.location,
+                    'created_by': {
+                        'username': self.item_post.created_by.username,
+                        'profile_image': self.item_post.created_by.profile_image.url,
+                        'about': self.item_post.created_by.about,
+                        'address': self.item_post.created_by.address
+                    },
+                    'itempostimage_set': [],
+                    'characteristics': self.item_post.characteristics,
+                    'soil_type': self.item_post.soil_type,
+                    'light_requirement': self.item_post.light_requirement,
+                    'cover_image': self.item_post.cover_image.url,
+                    'is_active': self.item_post.is_active
+                    }
+            }])
+
+
+@override_settings(MEDIA_ROOT=MEDIA_ROOT)
+class TransactionPOSTTest(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.requester = UserFactory.create()
+        self.post_author = UserFactory.create()
+        self.item_post = ItemPostFactory.create(created_by=self.post_author, quantity=2)
+        self.rel_url = '/api/transactions/'
+        self.url = reverse('transactions')
+
+        self.valid_data = {
+                'requester_id': self.requester.id,
+                'requestee_id': self.post_author.id,
+                'item_post_id': self.item_post.id,
+                'request_amount': 1
+                }
+        self.client.login(username=self.post_author.username,
+                          password=USER_PASSWORD)
+
+    def tearDown(self):
+        super().tearDown()
+        User.objects.all().delete()
+        ItemPost.objects.all().delete()
+        Transaction.objects.all().delete()
+        UserFactory.reset_sequence(0)
+        ItemPostFactory.reset_sequence(0)
+
+        # delete temp folder
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+
+    def test_urlIsWorking(self):
+        response = self.client.post(self.rel_url, self.valid_data)
+
+        self.assertEqual(response.status_code, 201)
+
+    def test_urlByNameIsWorking(self):
+        response = self.client.post(self.url, self.valid_data)
+
+        self.assertEqual(response.status_code, 201)
+
+    def test_return401IfUnauthenticated(self):
+        self.client.logout()
+        response = self.client.post(self.rel_url, self.valid_data)
+        
+        self.assertEqual(response.status_code, 401)
+
+    def test_return401IfUnauthorised(self):
+        self.client.logout()
+        self.client.login(username=self.requester.username, password=USER_PASSWORD)
+        response = self.client.post(self.rel_url, self.valid_data)
+        
+        self.assertEqual(response.status_code, 401)
+        
+    def test_return400IfRequestAmountMoreThanItemPostQuantity(self):
+        invalid_data = {**self.valid_data, 'request_amount': 3}
+        response = self.client.post(self.rel_url, invalid_data)
+        
+        self.assertEqual(response.status_code, 400)
+
+    def test_return400IfRequestAmountLessThan1(self):
+        invalid_data = {**self.valid_data, 'request_amount': 0}
+        response = self.client.post(self.rel_url, invalid_data)
+        
+        self.assertEqual(response.status_code, 400)
+
+    def test_return400IfRequesterIdIsNotFound(self):
+        invalid_data = {**self.valid_data, 'requester_id': -1}
+        response = self.client.post(self.rel_url, invalid_data)
+        
+        self.assertEqual(response.status_code, 400)
+
+    def test_return400IfRequesteeIdIsNotFound(self):
+        invalid_data = {**self.valid_data, 'requestee_id': -1}
+        response = self.client.post(self.rel_url, invalid_data)
+        
+        self.assertEqual(response.status_code, 400)
+
+    def test_retrun400IfItemPostIsNotFound(self):
+        invalid_data = {**self.valid_data, 'item_post_id': -1}
+        response = self.client.post(self.rel_url, invalid_data)
+        
+        self.assertEqual(response.status_code, 400)
+
+    def test_retrun400IfItemPostIsNotNumber(self):
+        invalid_data = {**self.valid_data, 'item_post_id': 'invalid'}
+        response = self.client.post(self.rel_url, invalid_data)
+        
+        self.assertEqual(response.status_code, 400)
+
+    def test_itemPostBecomeInactiveIfQuantityBecome0(self):
+        self.valid_data = {**self.valid_data, 'request_amount': self.item_post.quantity}
+        self.client.post(self.url, self.valid_data)
+        item_post = ItemPost.objects.get(id=self.item_post.id)
+        self.assertTrue(not item_post.is_active)
+
+
+@override_settings(MEDIA_ROOT=MEDIA_ROOT)
+class MarkTransactionAsCompletedTest(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.requester = UserFactory.create()
+        self.post_author = UserFactory.create()
+        self.item_post = ItemPostFactory.create(created_by=self.post_author)
+        self.transaction = TransactionFactory.create(
+            requester=self.requester, requestee=self.post_author, item_post=self.item_post)
+        self.rel_url = '/api/transaction/markAsCompleted/'
+        self.url = reverse('mark-transaction-as-completed')
+
+        self.valid_data = {
+                'transaction_id': self.transaction.id
+                }
+        self.client.login(username=self.post_author.username,
+                          password=USER_PASSWORD)
+
+    def tearDown(self):
+        super().tearDown()
+        User.objects.all().delete()
+        ItemPost.objects.all().delete()
+        Transaction.objects.all().delete()
+        UserFactory.reset_sequence(0)
+        ItemPostFactory.reset_sequence(0)
+
+        # delete temp folder
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+
+    def test_urlIsWorking(self):
+        response = self.client.post(self.rel_url, self.valid_data)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_urlByNameIsWorking(self):
+        response = self.client.post(self.url, self.valid_data)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_return401IfUnauthenticated(self):
+        self.client.logout()
+        response = self.client.post(self.rel_url, self.valid_data)
+        
+        self.assertEqual(response.status_code, 401)
+
+    def test_return401IfUnauthorised(self):
+        self.client.logout()
+        self.client.login(username=self.requester.username, password=USER_PASSWORD)
+        response = self.client.post(self.rel_url, self.valid_data)
+        
+        self.assertEqual(response.status_code, 401)
+
+    def test_return400IfTransactionNotFound(self):
+        response = self.client.post(self.rel_url, {'transaction_id': -1})
+        
+        self.assertEqual(response.status_code, 400)
+
+    def test_return400IfTransactionIdIsNotNumber(self):
+        response = self.client.post(self.rel_url, {'transaction_id': 'haha'})
+        
+        self.assertEqual(response.status_code, 400)
+
+    def test_transactionMarkedAsCompletedIfSuccessful(self):
+        self.client.post(self.url, self.valid_data)
+        transaction = Transaction.objects.get(id=self.transaction.id)
+
+        self.assertTrue(transaction.is_completed)
