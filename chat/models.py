@@ -2,8 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from core.models import ItemPost
 
-# Create your models here.
-
 
 class Chatroom(models.Model):
     name = models.CharField(max_length=500)
@@ -12,7 +10,6 @@ class Chatroom(models.Model):
         get_user_model(), on_delete=models.DO_NOTHING, related_name='requester_chatrooms')
     requestee = models.ForeignKey(
         get_user_model(), on_delete=models.DO_NOTHING, related_name='requestee_chatrooms')
-    # online = models.ManyToManyField(to=get_user_model(), blank=True)
 
 
 class Message(models.Model):

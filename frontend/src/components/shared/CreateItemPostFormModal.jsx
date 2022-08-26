@@ -93,16 +93,6 @@ export default function CreateItemPostFormModal() {
     }));
   }
 
-  function handleMultipleImagesUploadChange(event) {
-    let images = event.target.files;
-    if (images && images.length > 0) {
-      setFormInputs((inputs) => ({
-        ...inputs,
-        [event.target.name]: images,
-      }));
-    }
-  }
-
   function clearFormData() {
     // clear form inputs and errors after the user close the modal
     setFormInputs(DEFAULT_STATE);
@@ -136,19 +126,6 @@ export default function CreateItemPostFormModal() {
                 onChange={handleChange}
                 selectionObject={Category}
               />
-              {/*
-
-              <Form.Group>
-                <Form.Label>Category</Form.Label>
-                <Form.Select name="category" onChange={handleChange}>
-                  {Object.keys(Category).map((key, index) => (
-                    <option value={Category[key]} key={index}>
-                      {Category[key]}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-      */}
             </Col>
             <Col sm={6} className="mb-3">
               <SelectFieldBs
@@ -157,18 +134,6 @@ export default function CreateItemPostFormModal() {
                 onChange={handleChange}
                 selectionObject={ItemType}
               />
-              {/*
-              <Form.Group>
-                <Form.Label>Item type</Form.Label>
-                <Form.Select name="item_type" onChange={handleChange}>
-                  {Object.keys(ItemType).map((key, index) => (
-                    <option value={ItemType[key]} key={index}>
-                      {ItemType[key]}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-      */}
             </Col>
           </Row>
           <Row>
@@ -218,23 +183,6 @@ export default function CreateItemPostFormModal() {
             onChange={handleChange}
             error={formErrors.title}
           />
-          {/*
-<Form.Group className="mb-3">
-            <Form.Label>Title</Form.Label>
-            <Form.Control
-              className={formErrors.title && "is-invalid"}
-              type="text"
-              name="title"
-              onChange={handleChange}
-            />
-            {formErrors.title && (
-              <Form.Text className="invalid-feedback">
-                {formErrors.title}
-              </Form.Text>
-            )}
-         </Form.Group> 
-      */}
-
           <TextAreaFieldBs
             className="mb-3"
             label="Description (optional)"
@@ -243,23 +191,6 @@ export default function CreateItemPostFormModal() {
             onChange={handleChange}
             error={formErrors.description}
           />
-          {/*
-          <Form.Group className="mb-3">
-            <Form.Label>Description (optional)</Form.Label>
-            <Form.Control
-              className={formErrors.description && "is-invalid"}
-              as="textarea"
-              name="description"
-              rows={3}
-              onChange={handleChange}
-            />
-            {formErrors.description && (
-              <Form.Text className="invalid-feedback">
-                {formErrors.description}
-              </Form.Text>
-            )}
-          </Form.Group>
-      */}
           <Form.Group className="mb-3">
             <Form.Label>Quantity</Form.Label>
             <Form.Control
@@ -293,24 +224,6 @@ export default function CreateItemPostFormModal() {
             onChange={handleChange}
             error={formErrors.pick_up_information}
           />
-          {/*
-          <Form.Group className="mb-3">
-            <Form.Label>Pick up information</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder={
-                formInputs.category === Category.LEND
-                  ? "e.g. Lending for 3 days. Collection at my house."
-                  : formInputs.category === Category.REQUEST
-                  ? "e.g. I can come over to your place during weekend."
-                  : "e.g. Saturday 9pm onwards."
-              }
-              name="pick_up_information"
-              onChange={handleChange}
-            />
-          </Form.Group>
-      */}
           <LocationAutocompleteFieldBs
             className="mb-3"
             label="Pick up location"
@@ -319,14 +232,6 @@ export default function CreateItemPostFormModal() {
             error={formErrors.location}
             apiKey={GOOGLE_MAP_API_KEY}
           />
-          {/*
-
-          <Form.Group className="mb-3">
-            <Form.Label>Pick up location</Form.Label>
-            <Form.Control type="text" name="location" onChange={handleChange} />
-          </Form.Group>
-      */}
-
           {formInputs.category === Category.GIVEAWAY &&
             formInputs.item_type === ItemType.SEED_OR_PLANT && (
               <>
@@ -339,18 +244,6 @@ export default function CreateItemPostFormModal() {
                   onChange={handleChange}
                   error={formErrors.characteristics}
                 />
-                {/*
-                <Form.Group className="mb-3">
-                  <Form.Label>Seed/plant characteristics</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    placeholder="Red in color. Spicy..."
-                    name="characteristics"
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-                */}
                 <Row className="mb-3">
                   <Col sm={6}>
                     <Form.Group>
@@ -376,21 +269,6 @@ export default function CreateItemPostFormModal() {
                       onChange={handleChange}
                       selectionObject={WaterRequirement}
                     />
-                    {/*
-                    <Form.Group>
-                      <Form.Label>Water Requirements</Form.Label>
-                      <Form.Select
-                        name="water_requirement"
-                        onChange={handleChange}
-                      >
-                        {Object.keys(WaterRequirement).map((key, index) => (
-                          <option value={WaterRequirement[key]} key={index}>
-                            {WaterRequirement[key]}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                */}
                   </Col>
                 </Row>
                 <Accordion>
@@ -408,21 +286,6 @@ export default function CreateItemPostFormModal() {
                             onChange={handleChange}
                             selectionObject={SoilType}
                           />
-                          {/*
-                          <Form.Group>
-                            <Form.Label>Soil type</Form.Label>
-                            <Form.Select
-                              name="soil_type"
-                              onChange={handleChange}
-                            >
-                              {Object.keys(SoilType).map((key, index) => (
-                                <option value={SoilType[key]} key={index}>
-                                  {SoilType[key]}
-                                </option>
-                              ))}
-                            </Form.Select>
-                          </Form.Group>
-                */}
                         </Col>
                         <Col sm={6}>
                           <SelectFieldBs
@@ -432,26 +295,6 @@ export default function CreateItemPostFormModal() {
                             onChange={handleChange}
                             selectionObject={LightRequirement}
                           />
-                          {/*
-                          <Form.Group>
-                            <Form.Label>Light requirement</Form.Label>
-                            <Form.Select
-                              name="light_requirement"
-                              onChange={handleChange}
-                            >
-                              {Object.keys(LightRequirement).map(
-                                (key, index) => (
-                                  <option
-                                    value={LightRequirement[key]}
-                                    key={index}
-                                  >
-                                    {LightRequirement[key]}
-                                  </option>
-                                )
-                              )}
-                            </Form.Select>
-                          </Form.Group>
-                */}
                         </Col>
                       </Row>
                       <TextAreaFieldBs
@@ -462,19 +305,6 @@ export default function CreateItemPostFormModal() {
                         onChange={handleChange}
                         error={formErrors.growing_tips}
                       />
-                      {/*
-                      <Form.Group>
-                        <Form.Label>
-                          Important growing tips (optional)
-                        </Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          rows={3}
-                          name="growing_tips"
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
-                */}
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>

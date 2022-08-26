@@ -10,9 +10,6 @@ export default function UserItemPostListing() {
     `/api/itemposts/?username=${username}`
   );
 
-  console.log("data", data);
-  console.log("error", error);
-
   if (isLoading) return <LoadingIndicator />;
   if (error)
     return (

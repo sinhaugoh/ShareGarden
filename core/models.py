@@ -94,14 +94,7 @@ class ItemPostImage(models.Model):
 
 
 class Transaction(models.Model):
-    # class Status(models.TextChoices):
-    #     PENDING = 'Pending'
-    #     ACCEPTED = 'Accepted'
-    #     COMPLETED = 'Completed'
-
     request_amount = models.PositiveSmallIntegerField()
-    # status = models.CharField(
-    #     max_length=10, choices=Status.choices, default=Status.PENDING)
     is_completed = models.BooleanField(default=False)
     date_modified = models.DateTimeField(auto_now=True)
     requester = models.ForeignKey(

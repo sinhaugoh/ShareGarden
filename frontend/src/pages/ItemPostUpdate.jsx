@@ -73,10 +73,6 @@ export default function ItemPostUpdate() {
         formData.append(key, formInputs[key]);
       }
     }
-    // Display the key/value pairs
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
 
     setIsSubmitting(true);
     let response = await fetch(`/api/itempost/${id}/`, {
@@ -88,13 +84,10 @@ export default function ItemPostUpdate() {
     });
 
     if (response.status === 200) {
-      console.log("post updated!!");
-      // navigate(`/itempost/${id}/`, { replace: true });
       navigate(-1);
     } else if (response.status === 400) {
       let data = await response.json();
       setFormErrors(data);
-      console.log("error 400", data);
     }
     setIsSubmitting(false);
   }
@@ -136,12 +129,7 @@ export default function ItemPostUpdate() {
   if (data.created_by.username !== user.username) {
     return <p>You are not authorised to access this page.</p>;
   }
-  // // set default form input if initial data is retrieved
-  // setFormInputs({
-  //   images: data.itempostimage_set,
-  // });
 
-  console.log(data);
   return (
     <Container className="my-3 bg-white p-3">
       <h1 className="mb-3">Update {data.title}</h1>
@@ -168,31 +156,6 @@ export default function ItemPostUpdate() {
         </Row>
         <Row>
           <Col sm={6} className="mb-3">
-            {/*
-            <Image
-              thumbnail
-              src={data.cover_image}
-              style={{ width: "100px", height: "100px", objectFit: "cover" }}
-            />
-            {formInputs.cover_image ? (
-              <Button>Delete</Button>
-            ) : (
-              <>
-                <Form.Control
-                  className={formErrors.cover_image && "is-invalid"}
-                  name="cover_image"
-                  type="file"
-                  onChange={handleSingleImageUploadChange}
-                  accept="image/png, image/jpeg"
-                />
-                {formErrors.cover_image && (
-                  <Form.Text className="invalid-feedback">
-                    {formErrors.cover_image}
-                  </Form.Text>
-                )}
-              </>
-            )}
-      */}
             <Form.Group>
               <Form.Label>Reupload cover image</Form.Label>
               <Form.Control

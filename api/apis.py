@@ -103,8 +103,6 @@ class ItemPostList(APIView):
         if not request.query_params:
             # if no query param given, that means show only active posts and exclude posts posted
             # by the logged in user
-            # item_posts_queryset = ItemPost.objects.exclude(
-            #     created_by=request.user.id).filter(is_active=True).order_by('-date_created')
             q_objects_for_exclude.add(Q(created_by=request.user.id), Q.AND)
             q_objects_for_filter.add(Q(is_active=True), Q.AND)
         else:

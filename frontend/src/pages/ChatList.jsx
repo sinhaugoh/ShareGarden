@@ -1,12 +1,9 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../contexts/AuthContext";
 import useFetch from "../hooks/useFetch";
 import { Container, Row, Col } from "react-bootstrap";
 import ChatListCard from "../components/chatlist/ChatListCard";
 import LoadingIndicator from "../components/shared/LoadingIndicator";
 
 export default function ChatList() {
-  const { user } = useAuth();
   const { data: chatList, isLoading, error } = useFetch("/api/chats/");
 
   console.log("chatlist", chatList);

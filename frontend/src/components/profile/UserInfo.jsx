@@ -12,8 +12,6 @@ export default function UserInfo() {
   const GET_USER_API_PATH = `/api/user/${username}`;
   const { data, isLoading, error } = useFetch(GET_USER_API_PATH);
 
-  console.log("error", error);
-
   if (isLoading) return <LoadingIndicator />;
   if (error) {
     return (

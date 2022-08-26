@@ -1,7 +1,6 @@
 import TransactionTile from "./TransactionTile";
 import { Row, Col, Accordion } from "react-bootstrap";
 import useFetch from "../../hooks/useFetch";
-import { useState, useEffect } from "react";
 import { getCookie } from "../../utils";
 import LoadingIndicator from "../shared/LoadingIndicator";
 
@@ -12,19 +11,10 @@ export default function TransactionList() {
     error,
     refetchData,
   } = useFetch("/api/transactions/");
-  // const [shouldRefresh, setShouldRefresh] = useState(false);
-
-  // useEffect(() => {
-  //   if (shouldRefresh) {
-  //     window.location.reload();
-  //   }
-  // }, [shouldRefresh]);
 
   if (isLoading) return <LoadingIndicator />;
 
   if (error) return <p>{error}</p>;
-
-  console.log("transactionsData", transactionsData);
 
   // categories transactionsData
   let onGoingTransaction = [];

@@ -215,15 +215,6 @@ class CreateItemPostSerializer(serializers.ModelSerializer):
             'is_active'
         ]
 
-    # def validate_images(self, value):
-    #     print('halo')
-    #     print(self.context.get('request'))
-    #     if len(self.context.get('request').data.pop('images')) > 5:
-    #         # throw validation error if number of images more than 5
-    #         raise serializers.ValidationError('Upload count exceeded.')
-
-    #     return value
-
     def validate_location(self, value):
         gmaps = googlemaps.Client(key=GOOGLE_API_KEY)
         # raise validation error if the google map api cannot geocode the address

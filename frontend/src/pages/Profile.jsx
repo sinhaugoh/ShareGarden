@@ -1,4 +1,4 @@
-import { Container, Button } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import UserInfo from "../components/profile/UserInfo";
 import UserItemPostListing from "../components/profile/UserItemPostListing";
 

@@ -26,8 +26,6 @@ class ChatroomSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    # sender = serializers.SlugRelatedField(
-    #     read_only=True, slug_field='username')
     sender = UserSerializer()
 
     class Meta:

@@ -55,18 +55,13 @@ export default function Chatroom() {
             break;
           case "chatroom_detail":
             setChatroomDetail(data.chatroom_detail);
+            break;
           default:
             break;
         }
       },
     }
   );
-
-  console.log("messages:", messages);
-  console.log("chatroom", chatroomDetail);
-  console.log("message input: ", messageInput);
-  console.log("isdeal", isDeal);
-  console.log("note", note);
 
   function handleInputOnChange(event) {
     setMessageInput(event.target.value);

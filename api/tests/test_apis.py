@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase, override_settings
 from unittest.mock import patch
 import tempfile
 import shutil
-from chat.models import Chatroom, Message
+from chat.models import Chatroom
 from core.model_factories import UserFactory, ItemPostFactory, TransactionFactory
 from chat.model_factories import ChatroomFactory
 from core.models import Transaction, User, ItemPost
