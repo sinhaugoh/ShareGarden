@@ -270,5 +270,5 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ['id', 'request_amount', 'is_completed', 'date_modified',
+        fields = ['id', 'request_amount', 'is_completed',
                   'note', 'requester', 'requestee', 'item_post']
