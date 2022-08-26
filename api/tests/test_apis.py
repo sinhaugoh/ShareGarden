@@ -780,7 +780,6 @@ class TransactionsTest(APITestCase):
     def test_returnCorrectResultIfSuccessful(self):
         response = self.client.get(self.rel_url)
         data = response.json()
-        self.maxDiff = None
         
         self.assertEqual(data, [{
                 'id': self.transaction.id,
