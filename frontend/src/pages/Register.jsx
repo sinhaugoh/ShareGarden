@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import LoadingIndicator from "../components/shared/LoadingIndicator";
 
 export default function Register() {
   const [formInputs, setFormInputs] = useState({});
@@ -36,8 +37,7 @@ export default function Register() {
 
   // show loading if user is already authenticated
   if (user) {
-    //TODO: implement loading
-    return <h1>loading</h1>;
+    return <LoadingIndicator />;
   }
 
   return (

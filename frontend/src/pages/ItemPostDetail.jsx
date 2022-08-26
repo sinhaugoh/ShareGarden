@@ -4,6 +4,7 @@ import { createRoomName } from "../utils";
 import { useParams, useNavigate } from "react-router-dom";
 import { DEFAULT_PROFILE_PIC_PATH, Category, ItemType } from "../constants";
 import { useAuth } from "../contexts/AuthContext";
+import LoadingIndicator from "../components/shared/LoadingIndicator";
 
 export default function ItemPostDetail() {
   const { id } = useParams();
@@ -12,8 +13,7 @@ export default function ItemPostDetail() {
   const navigate = useNavigate();
   console.log("data", data);
 
-  //TODO: implement loading
-  if (isLoading) return <h1>Loading...</h1>;
+  if (isLoading) return <LoadingIndicator />;
   if (error)
     return <p>Failed to load the page. Please contact admin for assistance.</p>;
 

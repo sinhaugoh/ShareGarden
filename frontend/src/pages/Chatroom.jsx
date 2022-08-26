@@ -15,6 +15,7 @@ import {
 import MessageBubbleLeft from "../components/chatroom/MessageBubbleLeft";
 import MessageBubbleRight from "../components/chatroom/MessageBubbleRight";
 import { DEFAULT_PROFILE_PIC_PATH } from "../constants";
+import LoadingIndicator from "../components/shared/LoadingIndicator";
 
 export default function Chatroom() {
   const { user } = useAuth();
@@ -135,7 +136,6 @@ export default function Chatroom() {
 
   console.log("ready state", readyState);
 
-  //TODO: implement 404 page
   if (hasError)
     return (
       <div>
@@ -143,8 +143,7 @@ export default function Chatroom() {
       </div>
     );
 
-  //TODO: implement loading page
-  if (!chatroomDetail || readyState !== 1) return <div>Loading...</div>;
+  if (!chatroomDetail || readyState !== 1) return <LoadingIndicator />;
 
   return (
     <Container className="bg-white mt-5 border border-grey">

@@ -3,6 +3,7 @@ import { Row, Col, Accordion } from "react-bootstrap";
 import useFetch from "../../hooks/useFetch";
 import { useState, useEffect } from "react";
 import { getCookie } from "../../utils";
+import LoadingIndicator from "../shared/LoadingIndicator";
 
 export default function TransactionList() {
   const {
@@ -19,10 +20,8 @@ export default function TransactionList() {
   //   }
   // }, [shouldRefresh]);
 
-  //TODO: implement loading page
-  if (isLoading) return <h1>loading...</h1>;
+  if (isLoading) return <LoadingIndicator />;
 
-  //TODO: implement error page
   if (error) return <p>{error}</p>;
 
   console.log("transactionsData", transactionsData);

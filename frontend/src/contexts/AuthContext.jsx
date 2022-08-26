@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import LoadingIndicator from "../components/shared/LoadingIndicator";
 
 const AuthContext = createContext({});
 
@@ -81,8 +82,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{ user, register, logout, fetchAuthUser }}>
-      {/*TODO: implement loading page*/}
-      {isLoading ? <h1>is loading...</h1> : children}
+      {isLoading ? <LoadingIndicator /> : children}
     </AuthContext.Provider>
   );
 }

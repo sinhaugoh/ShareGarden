@@ -5,7 +5,6 @@ import { useAuth } from "../../contexts/AuthContext.jsx";
 export default function RequireAuth({ children, redirectedPath = "/" }) {
   //const { user, isLoading, isAuthenticated } = useAuth();
   //if (isLoading) {
-  //  //TODO: implement loading page
   //  return <h1>Loading...</h1>;
   //}
   //if (!isAuthenticated) {

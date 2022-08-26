@@ -17,6 +17,7 @@ import SelectFieldBs from "../components/shared/form/SelectFieldBs";
 import TextFieldBs from "../components/shared/form/TextFieldBs";
 import TextAreaFieldBs from "../components/shared/form/TextAreaFieldBs";
 import LocationAutocompleteFieldBs from "../components/shared/form/LocationAutocompleteFieldBs";
+import LoadingIndicator from "../components/shared/LoadingIndicator";
 
 export default function ItemPostUpdate() {
   const { id } = useParams();
@@ -126,15 +127,13 @@ export default function ItemPostUpdate() {
     }));
   }
 
-  //TODO: implement loading
-  if (isLoading) return <h1>Loading...</h1>;
+  if (isLoading) return <LoadingIndicator />;
   if (error) {
     return <p>Failed to load the page. Please contact admin for assistance.</p>;
   }
 
   // check if the user is authorised to edit the item post
   if (data.created_by.username !== user.username) {
-    //TODO: implement unauthorised page
     return <p>You are not authorised to access this page.</p>;
   }
   // // set default form input if initial data is retrieved

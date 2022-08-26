@@ -51,7 +51,6 @@ function App() {
             <Route
               path="/chatroom/:room_name/"
               element={
-                //TODO: change redirected path
                 <RequireAuth redirectedPath="/chatlist/">
                   <Chatroom />
                 </RequireAuth>

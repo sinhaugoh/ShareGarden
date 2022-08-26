@@ -641,8 +641,6 @@ class ItemPostDetailPATCHTest(APITestCase):
         # delete temp folder
         shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
 
-    # TODO: implement test for this
-
 
 @override_settings(MEDIA_ROOT=MEDIA_ROOT)
 class ChatsTest(APITestCase):

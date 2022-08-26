@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { DEFAULT_PROFILE_PIC_PATH } from "../../constants.js";
 import useFetch from "../../hooks/useFetch";
 import { useAuth } from "../../contexts/AuthContext";
+import LoadingIndicator from "../shared/LoadingIndicator";
 
 export default function UserInfo() {
   const { username } = useParams();
@@ -13,8 +14,7 @@ export default function UserInfo() {
 
   console.log("error", error);
 
-  //TODO: implement loading
-  if (isLoading) return <h1>Loading...</h1>;
+  if (isLoading) return <LoadingIndicator />;
   if (error) {
     return (
       <p>

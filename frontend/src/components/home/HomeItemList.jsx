@@ -2,6 +2,7 @@ import ItemCard from "../shared/ItemCard";
 import { Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import LoadingIndicator from "../shared/LoadingIndicator";
 
 export default function HomeItemList({ query, category, itemType }) {
   const [data, setData] = useState(null);
@@ -35,7 +36,7 @@ export default function HomeItemList({ query, category, itemType }) {
     })();
   }, [user, query, category, itemType]);
 
-  if (isLoading) return <h1>Loading...</h1>;
+  if (isLoading) return <LoadingIndicator />;
   if (error)
     return (
       <p>Some error has occured. Please reload the page or contact admin.</p>

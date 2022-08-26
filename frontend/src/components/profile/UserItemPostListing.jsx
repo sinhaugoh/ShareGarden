@@ -2,6 +2,7 @@ import { Row, Accordion, Col } from "react-bootstrap";
 import useFetch from "../../hooks/useFetch";
 import { useParams } from "react-router-dom";
 import ItemCard from "../shared/ItemCard";
+import LoadingIndicator from "../shared/LoadingIndicator";
 
 export default function UserItemPostListing() {
   const { username } = useParams();
@@ -12,10 +13,8 @@ export default function UserItemPostListing() {
   console.log("data", data);
   console.log("error", error);
 
-  //TODO: implement loading
-  if (isLoading) return <h1>Loading...</h1>;
+  if (isLoading) return <LoadingIndicator />;
   if (error)
-    //TODO: implement 404 page
     return (
       <p>
         Some error occured. Please contact admin for assistance. {error.message}

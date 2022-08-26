@@ -21,7 +21,6 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # TODO: make this login required
     # path('', TemplateView.as_view(template_name="index.html")),
     # # re_path(r'^(?:.*)/?$', TemplateView.as_view(template_name="index.html"))
     # # this one makes the auto append trailing slash works

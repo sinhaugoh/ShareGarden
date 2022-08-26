@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import useFetch from "../hooks/useFetch";
 import { Container, Row, Col } from "react-bootstrap";
 import ChatListCard from "../components/chatlist/ChatListCard";
+import LoadingIndicator from "../components/shared/LoadingIndicator";
 
 export default function ChatList() {
   const { user } = useAuth();
@@ -10,11 +11,9 @@ export default function ChatList() {
 
   console.log("chatlist", chatList);
 
-  //TODO: implement error page
   if (error) return <h1>{error}</h1>;
 
-  //TODO implement loading page
-  if (isLoading) return <h1>Loading...</h1>;
+  if (isLoading) return <LoadingIndicator />;
 
   return (
     <Container className="mt-3 bg-white">
