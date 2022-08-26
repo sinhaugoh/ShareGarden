@@ -11,7 +11,6 @@ export default function ItemPostDetail() {
   const { data, isLoading, error } = useFetch(`/api/itempost/${id}/`);
   const { user } = useAuth();
   const navigate = useNavigate();
-  console.log("data", data);
 
   if (isLoading) return <LoadingIndicator />;
   if (error)

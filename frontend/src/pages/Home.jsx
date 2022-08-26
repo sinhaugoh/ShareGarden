@@ -25,8 +25,6 @@ export default function Home() {
     setItemType(event.target.value);
   }
 
-  console.log("search:", query);
-
   return (
     <Container className="mt-3">
       <h1 className="mb-3">Discover</h1>

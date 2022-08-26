@@ -27,8 +27,6 @@ export default function ItemPostUpdate() {
   const [formInputs, setFormInputs] = useState({});
   const navigate = useNavigate();
   const { user } = useAuth();
-  console.log("formInputs", formInputs);
-  console.log("data", data);
 
   useEffect(() => {
     setFormInputs({

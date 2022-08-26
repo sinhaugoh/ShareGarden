@@ -43,7 +43,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         messages = await self.get_message_history_in_dict(self.chatroom)
 
         await self.accept()
-        print("Connected!")
 
         # send to websocket
         await self.send_json({
@@ -96,7 +95,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 name=self.room_name, requester=self.requester, requestee=self.post_author, post=self.item_post)
             return chatroom
         except ObjectDoesNotExist:
-            print('error: invalid url')
             return None
 
     @sync_to_async

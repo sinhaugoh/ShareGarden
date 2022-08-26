@@ -6,8 +6,6 @@ import LoadingIndicator from "../components/shared/LoadingIndicator";
 export default function ChatList() {
   const { data: chatList, isLoading, error } = useFetch("/api/chats/");
 
-  console.log("chatlist", chatList);
-
   if (error) return <h1>{error}</h1>;
 
   if (isLoading) return <LoadingIndicator />;

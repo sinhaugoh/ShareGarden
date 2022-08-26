@@ -40,11 +40,6 @@ export default function ProfileUpdate() {
       }
     }
 
-    // Display the key/value pairs
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
-
     setIsSubmitting(true);
     let response = await fetch("/api/account/update/", {
       method: "PATCH",
@@ -55,14 +50,12 @@ export default function ProfileUpdate() {
     });
 
     if (response.status === 200) {
-      console.log("user profile updated!");
       // refetch auth user
       await fetchAuthUser();
       navigate(-1);
     } else if (response.status === 400) {
       const data = await response.json();
       setFormErrors(data);
-      console.log("error", data);
     }
 
     setIsSubmitting(false);

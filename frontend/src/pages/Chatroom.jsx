@@ -129,8 +129,6 @@ export default function Chatroom() {
     }
   }
 
-  console.log("ready state", readyState);
-
   if (hasError)
     return (
       <div>

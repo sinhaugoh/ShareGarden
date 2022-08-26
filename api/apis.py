@@ -112,8 +112,6 @@ class ItemPostList(APIView):
             category_filter = request.query_params.get('category')
             item_type_filter = request.query_params.get('item_type')
 
-            print('category', category_filter)
-            print('item_type', item_type_filter)
             # include optional filters
             if user_filter:
                 # this filter is used in profile page

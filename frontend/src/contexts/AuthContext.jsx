@@ -78,8 +78,6 @@ export function AuthProvider({ children }) {
     navigate("/");
   }
 
-  console.log(user);
-
   return (
     <AuthContext.Provider value={{ user, register, logout, fetchAuthUser }}>
       {isLoading ? <LoadingIndicator /> : children}

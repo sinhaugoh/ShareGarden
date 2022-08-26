@@ -116,7 +116,6 @@ class ItemPostSerializer(serializers.ModelSerializer):
         return attrs
 
     def update(self, instance, validated_data):
-        print('validated_data', validated_data)
         with transaction.atomic():
             instance.title = validated_data.get('title', instance.title)
             instance.description = validated_data.get(
