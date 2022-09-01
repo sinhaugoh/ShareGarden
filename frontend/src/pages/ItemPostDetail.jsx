@@ -57,6 +57,11 @@ export default function ItemPostDetail() {
             size="lg"
             style={{ width: "200px" }}
             onClick={() => {
+              if (!user) {
+                // redirect user to login page if not authenticated
+                window.location.replace(`/login/`);
+              }
+
               if (user?.username === data.created_by.username) {
                 // redirect to item post update page
                 navigate("update/");
@@ -161,6 +166,12 @@ export default function ItemPostDetail() {
                   {data.light_requirement === "None" || !data.light_requirement
                     ? "No information provided"
                     : data.light_requirement}
+                </p>
+                <h5>Days to harvest</h5>
+                <p>
+                  {data.days_to_harvest === "None" || !data.days_to_harvest
+                    ? "No information provided"
+                    : data.days_to_harvest}
                 </p>
               </Col>
             </Row>
