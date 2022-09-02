@@ -6,7 +6,7 @@ import tempfile
 import shutil
 from chat.models import Chatroom
 from core.model_factories import UserFactory, ItemPostFactory, TransactionFactory
-from chat.model_factories import ChatroomFactory
+from chat.model_factories import ChatroomFactory, MessageFactory
 from core.models import Transaction, User, ItemPost
 from core.tests.test_views import TEST_SERVER_DOMAIN, USER_PASSWORD
 
@@ -651,6 +651,7 @@ class ChatsTest(APITestCase):
         self.item_post = ItemPostFactory.create(created_by=self.post_author)
         self.chatroom = ChatroomFactory.create(
             requester=self.requester, requestee=self.post_author, post=self.item_post)
+        self.message = MessageFactory.create(chatroom=self.chatroom, sender=self.requester)
         self.rel_url = '/api/chats/'
         self.url = reverse('chat-list')
 
@@ -705,6 +706,10 @@ class ChatsTest(APITestCase):
     def test_returnCorrectResult(self):
         response = self.client.get(self.rel_url)
         data = response.json()
+
+        formatted_message_timestamp = self.message.timestamp.strftime(
+            "%Y-%m-%dT%H:%M:%S.%fZ")
+        
         self.assertEqual(data, [{
             'name': self.chatroom.name,
             'post': {
@@ -723,7 +728,15 @@ class ChatsTest(APITestCase):
                 'profile_image': self.requester.profile_image.url,
                 'username': self.requester.username
             },
-            'last_message': None
+            'last_message': {
+                'content': self.message.content,
+                'sender': {
+                    'id': self.requester.id,
+                    'profile_image': self.requester.profile_image.url,
+                    'username': self.requester.username
+                },
+                'timestamp': formatted_message_timestamp
+            }
         }])
 
 

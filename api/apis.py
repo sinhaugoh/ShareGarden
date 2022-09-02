@@ -100,36 +100,34 @@ class ItemPostList(APIView):
         q_objects_for_filter = Q()
         q_objects_for_exclude = Q()
 
-        if not request.query_params:
-            # if no query param given, that means show only active posts and exclude posts posted
-            # by the logged in user
+        # retrieve filters params
+        user_filter = request.query_params.get('username')
+        query_filter = request.query_params.get('q')
+        category_filter = request.query_params.get('category')
+        item_type_filter = request.query_params.get('item_type')
+
+        # include optional filters
+        if user_filter:
+            # this filter is used in profile page
+            try:
+                user = User.objects.get(username=user_filter)
+                q_objects_for_filter.add(Q(created_by=user), Q.AND)
+            except User.DoesNotExist:
+                return Response({'detail': 'Queried user not found'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            # show only active posts and exclude posts posted by the logged in user
             q_objects_for_exclude.add(Q(created_by=request.user.id), Q.AND)
             q_objects_for_filter.add(Q(is_active=True), Q.AND)
-        else:
-            # retrieve filters params
-            user_filter = request.query_params.get('username')
-            query_filter = request.query_params.get('q')
-            category_filter = request.query_params.get('category')
-            item_type_filter = request.query_params.get('item_type')
 
-            # include optional filters
-            if user_filter:
-                # this filter is used in profile page
-                try:
-                    user = User.objects.get(username=user_filter)
-                    q_objects_for_filter.add(Q(created_by=user), Q.AND)
-                except User.DoesNotExist:
-                    return Response({'detail': 'Queried user not found'}, status=status.HTTP_404_NOT_FOUND)
+        if query_filter:
+            q_objects_for_filter.add(
+                Q(title__icontains=query_filter), Q.AND)
 
-            if query_filter:
-                q_objects_for_filter.add(
-                    Q(title__icontains=query_filter), Q.AND)
+        if category_filter:
+            q_objects_for_filter.add(Q(category=category_filter), Q.AND)
 
-            if category_filter:
-                q_objects_for_filter.add(Q(category=category_filter), Q.AND)
-
-            if item_type_filter:
-                q_objects_for_filter.add(Q(item_type=item_type_filter), Q.AND)
+        if item_type_filter:
+            q_objects_for_filter.add(Q(item_type=item_type_filter), Q.AND)
 
         # retrieve item posts with applied filters
         item_posts = ItemPost.objects.exclude(q_objects_for_exclude).filter(
@@ -224,8 +222,10 @@ class Chats(APIView):
 
             if last_message is not None:
                 last_message = MessageSerializer(instance=last_message).data
+                payload.append({**chatroom_dict, 'last_message': last_message})
 
-            payload.append({**chatroom_dict, 'last_message': last_message})
+        payload = sorted(payload, key=lambda x: x.get(
+            'last_message').get('timestamp'), reverse=True)
 
         return Response(payload, status=status.HTTP_200_OK)
 
